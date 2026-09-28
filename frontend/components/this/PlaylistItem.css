@@ -1,0 +1,7 @@
+#item_root #item__openDirectlyBtn {
+  opacity: 0;
+}
+
+#item_root:hover #item__openDirectlyBtn {
+  opacity: 1;
+}

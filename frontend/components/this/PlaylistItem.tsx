@@ -1,7 +1,9 @@
 import { css } from "molcss"
 import { playlistCoverIconUrl, type IPlaylistItemData } from "../../api"
-import { Show } from "solid-js"
 import { Author } from "./Author"
+import { BsPlayFill } from "solid-icons/bs"
+import "./PlaylistItem.css"
+import { Button, ButtonSize, Tooltip } from "../ui"
 
 const item__root = css`
   width: 11.5rem;
@@ -10,6 +12,11 @@ const item__root = css`
   text-align: center;
   user-select: none;
   text-align: left;
+  outline: 4px solid transparent;
+  border-radius: 6px;
+  &:hover {
+    outline-color: var(--sapphire);
+  }
 `
 
 const item__coverIcon = css`
@@ -17,6 +24,7 @@ const item__coverIcon = css`
   height: 11.5rem;
   border-radius: 6px;
   margin-bottom: 7px;
+  position: relative;
 `
 
 const item__coverIconHasIcon = css`
@@ -28,22 +36,36 @@ const item__coverIconEmpty = css`
   background-color: var(--base);
 `
 
-const item__authors = css`
-  white-space: nowrap;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
+const item__nameWrap = css`
+  padding-inline: 4px;
+  padding-bottom: 5px;
+`
+
+const item__openDirectlyBtn = css`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-right: 5px;
+  margin-bottom: 5px;
 `
 
 export function PlaylistItem(props: IPlaylistItemData) {
   return (
-    <button class={item__root}>
+    <div class={item__root} id="item_root">
       <div 
         class={`${item__coverIcon} ${props.coverIconImage ? item__coverIconHasIcon : item__coverIconEmpty}`}
         style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage!)}')`}
       >
+        <Tooltip label$="Play this one">
+          <Button size$={ButtonSize.ICON} class={item__openDirectlyBtn} id="item__openDirectlyBtn">
+            <BsPlayFill size={27} />
+          </Button>
+        </Tooltip>
       </div>
-      <h3>{props.name}</h3>
-      <Author info$={props.author} />
-    </button>
+      <div class={item__nameWrap}>
+        <h3>{props.name}</h3>
+        <Author info$={props.author} />
+      </div>
+    </div>
   )
 }
