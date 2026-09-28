@@ -1,3 +1,4 @@
 {
-  "typescript.preferences.preferTypeOnlyAutoImports": true
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "explorer.compactFolders": false
 }

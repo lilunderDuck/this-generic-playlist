@@ -12,5 +12,9 @@ func main() {
 		return nil
 	})
 
+	assetsServer := core.NewAssetsServer("toast-playlist")
+	assetsServer.MustOpen()
+
 	core.StartServer(server)
+	assetsServer.Close()
 }

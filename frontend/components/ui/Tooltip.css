@@ -1,0 +1,15 @@
+[data-corvu-tooltip-content][data-placement=left] [data-corvu-tooltip-arrow] {
+  right: 4px !important;
+}
+
+[data-corvu-tooltip-content][data-placement=right] [data-corvu-tooltip-arrow] {
+  left: 4px !important;
+}
+
+[data-corvu-tooltip-content][data-placement=top] [data-corvu-tooltip-arrow] {
+  bottom: 4px !important;
+}
+
+[data-corvu-tooltip-content][data-placement=bottom] [data-corvu-tooltip-arrow] {
+  transform-origin: center 2px !important;
+}

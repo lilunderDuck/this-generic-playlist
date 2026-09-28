@@ -1,0 +1,142 @@
+import { css } from "molcss"
+import { playlistCoverIconUrl, type IPlaylistItemData } from "../../api"
+import { BiSolidPlaylist, BiSolidTime } from "solid-icons/bi"
+import { For } from "solid-js"
+import { Button, ButtonVariant } from "../ui"
+import { formatSecondsToMMSS } from "../../utils"
+import { Author } from "./Author"
+
+const sidebar__root = css`
+  width: 55%;
+  height: calc(100% - 2 * 10px);
+  background-color: var(--mantle);
+  border-radius: 6px;
+  margin: 10px;
+  user-select: none;
+  position: relative;
+`
+
+const sidebar__bannerSection = css`
+  width: 100%;
+  height: 13.5rem;
+  position: relative;
+`
+
+const sidebar__banner = css`
+  width: 100%;
+  height: 13.5rem;
+  border-radius: 6px;
+  filter: blur(1px) brightness(0.5);
+`
+
+const sidebar__bannerExistBanner = css`
+  background: center center no-repeat var(--playlist-banner-url);
+  background-size: cover;
+`
+
+const sidebar__coverIconWrap = css`
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  gap: 10px;
+  padding-inline: 10px;
+  padding-bottom: 10px;
+`
+
+const sidebar__coverIcon = css`
+  width: 8rem;
+  height: 8rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+`
+
+const sidebar__coverIconHasIcon = css`
+  background: center center no-repeat var(--playlist-cover-icon-url);
+  background-size: cover;
+`
+
+const sidebar__coverIconEmpty = css`
+  background-color: var(--base);
+`
+
+const sidebar__metadataInfoSection = css`
+  margin-block: 5px;
+`
+
+const sidebar__metadataInfoLine = css`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-inline: 10px;
+  padding-block: 4px;
+`
+
+const sidebar__descriptionSection = css`
+  padding: 10px;
+`
+
+const sidebar__playlistName = css`
+  line-height: 1;
+  margin-bottom: 10px;
+`
+
+const sidebar__bottomBarSection = css`
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding-bottom: 10px;
+  padding-right: 10px;
+`
+
+export function PlaylistSidebarItemInfo(props: IPlaylistItemData) {
+  const stats = [
+    { icon$: BiSolidPlaylist, stat$: `Contain ${props.totalTrack} tracks` },
+    { icon$: BiSolidTime, stat$: `Total playlist runtime is ${formatSecondsToMMSS(props.totalRuntimeInSecond)}` },
+    // { icon$: BsCalendar, stat$: "Playlist created at 10:40 AM, 10/04/2024" },
+  ]
+
+  const pickRandomBanner = () => {
+    if (!props.bannerImages) return ''
+    const index = Math.floor(Math.random() * props.bannerImages.length)
+    return props.bannerImages[index]
+  }
+
+  return (
+    <aside 
+      class={sidebar__root} 
+      style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage ?? '')}');--playlist-banner-url:url('${playlistCoverIconUrl(props.id, pickRandomBanner())}')`}
+    >
+      <section class={sidebar__bannerSection}>
+        <div class={`${sidebar__banner} ${sidebar__bannerExistBanner}`} />
+        <div class={sidebar__coverIconWrap}>
+          <div class={`${sidebar__coverIcon} ${props.coverIconImage ? sidebar__coverIconHasIcon : sidebar__coverIconEmpty}`} />
+          <div>
+            <h1 class={sidebar__playlistName}>{props.name}</h1>
+            <Author info$={props.author} />
+          </div>
+        </div>
+      </section>
+      <section class={sidebar__metadataInfoSection}>
+        <For each={stats}>
+          {it => (
+            <div class={sidebar__metadataInfoLine}>
+              <it.icon$ size={25} />
+              {it.stat$}
+            </div>
+          )}
+        </For>
+      </section>
+      <section class={sidebar__descriptionSection}>
+        <p>{props.description}</p>
+      </section>
+      <section class={sidebar__bottomBarSection}>
+        <Button variant$={ButtonVariant.DANGER}>Close</Button>
+        <Button variant$={ButtonVariant.SECONDARY}>Play this one for me</Button>
+      </section>
+    </aside>
+  )
+}

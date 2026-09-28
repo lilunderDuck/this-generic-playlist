@@ -16,7 +16,7 @@ func isPostRequest(res http.ResponseWriter, req *http.Request) bool {
 	return true
 }
 
-func RegisterFn[Data any, ReturnValue comparable](
+func RegisterFn[Data any, ReturnValue any](
 	name string,
 	handler func(data *Data) (*ReturnValue, error),
 ) {

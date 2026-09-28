@@ -1,12 +1,13 @@
 /* @refresh reload */
 import './assets/index.css'
+import 'molcss/style.css'
 import { render } from 'solid-js/web'
 import App from './app'
 import { Router } from '@solidjs/router'
 // @ts-ignore
 import routes from '~solid-pages'
 
-const root = document.getElementById('root')!
+export const root = document.getElementById('root')!
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   throw new Error(
