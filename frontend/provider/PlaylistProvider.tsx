@@ -11,6 +11,7 @@ interface IPlaylistContext {
   playlistItems$: Accessor<IPlaylistItemData[]>
   trackPlayer$: MediaPlayer<"audio">
   playlistState$: PlayerlistState
+  resyncPlaylist$(playlistId: string): Promise<void>
 }
 
 const Context = createContext<IPlaylistContext>()
@@ -36,13 +37,29 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
   const trackPlayer = createMediaPlayer("audio")
   const trackState = createPlayerlistState(trackPlayer)
 
+  const resyncPlaylist: IPlaylistContext["resyncPlaylist$"] = async(playlistId) => {
+    const resyncedData = await CODEC.playlist_resync$({
+      playlistId: playlistId
+    })
+
+    if (sidebarInfo()?.id === resyncedData.playlist.id) {
+      setSidebarInfo(null)
+      setSidebarInfo(resyncedData.playlist)
+    }
+
+    if (trackState.currentPlaylist$()?.id === resyncedData.playlist.id) {
+      trackState.syncData$(resyncedData.playlist, resyncedData.tracks)
+    }
+  }
+
   return (
     <Context.Provider value={{
       setSidebarInfo$: setSidebarInfo,
       sidebarInfo$: sidebarInfo,
       playlistItems$: playlistItems,
       trackPlayer$: trackPlayer,
-      playlistState$: trackState
+      playlistState$: trackState,
+      resyncPlaylist$: resyncPlaylist
     }}>
       <trackPlayer.Player$ />
       {props.children}

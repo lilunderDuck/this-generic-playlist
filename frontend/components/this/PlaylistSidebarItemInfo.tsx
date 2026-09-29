@@ -6,7 +6,7 @@ import { Button, ButtonSize, ButtonVariant, Dialog, MarkdownText, Tooltip } from
 import { formatSecondsToMMSS } from "../../utils"
 import { Author } from "./Author"
 import { usePlaylistContext } from "../../provider"
-import { BsImageFill } from "solid-icons/bs"
+import { BsArrowCounterclockwise, BsCircleFill, BsImageFill } from "solid-icons/bs"
 import { A } from "@solidjs/router"
 import PlaylistBannerDialogContent from "./PlaylistBannerDialogContent"
 
@@ -24,6 +24,13 @@ const sidebar__bannerSection = css`
   width: 100%;
   height: 13.5rem;
   position: relative;
+  & #item__hideButton {
+    opacity: 0;
+  }
+
+  &:hover #item__hideButton {
+    opacity: 1;
+  }
 `
 
 const sidebar__banner = css`
@@ -102,10 +109,13 @@ const sidebar__moreOptionsButtonRow = css`
   left: 0;
   z-index: 2;
   margin: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `
 
 export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
-  const { setSidebarInfo$ } = usePlaylistContext()
+  const { setSidebarInfo$, resyncPlaylist$ } = usePlaylistContext()
 
   const stats = [
     { icon$: BiSolidPlaylist, stat$: `Contain ${props.info$.totalTrack} tracks` },
@@ -143,6 +153,12 @@ export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
               </Dialog>
             </Tooltip>
           </Show>
+
+          <Tooltip label$="Resync playlist">
+            <Button size$={ButtonSize.ICON} id="item__hideButton" onClick={() => resyncPlaylist$(props.info$.id)}>
+              <BsArrowCounterclockwise />
+            </Button>
+          </Tooltip>
         </div>
         <div class={`${sidebar__banner} ${sidebar__bannerExistBanner}`} />
         <div class={sidebar__coverIconWrap}>

@@ -12,15 +12,20 @@ type PlaylistItemSchema struct {
 
 type PlaylistItemData struct {
 	*PlaylistItemSchema
-	Id                   string `json:"id"`
-	TotalTrack           int    `json:"totalTrack"`
-	TotalRuntimeInSecond int    `json:"totalRuntimeInSecond"`
-	CreatedAt            int64  `json:"createdAt"`
+	Id                   string  `json:"id"`
+	TotalTrack           int     `json:"totalTrack"`
+	TotalRuntimeInSecond float64 `json:"totalRuntimeInSecond"`
+	CreatedAt            int64   `json:"createdAt"`
 }
 
 type PlaylistAuthorInfo struct {
 	Name string `json:"name"`
 	Url  string `json:"url,omitempty"`
+}
+
+type ResyncedPlaylistData struct {
+	Playlist PlaylistItemData `json:"playlist"`
+	Tracks   []TrackData      `json:"tracks"`
 }
 
 func NewPlaylistItemData(data *PlaylistItemSchema) *PlaylistItemData {
@@ -33,7 +38,7 @@ func NewPlaylistItemData(data *PlaylistItemSchema) *PlaylistItemData {
 	}
 }
 
-type GetAllTrackDataParam struct {
+type TargetPlaylistParam struct {
 	PlaylistId string `json:"playlistId" validate:"required"`
 }
 
@@ -42,6 +47,6 @@ type TrackData struct {
 	Id             int                `json:"id"`
 	Author         PlaylistAuthorInfo `json:"author,omitempty"`
 	CoverIconImage string             `json:"coverIconImage"`
-	TotalDuration  int                `json:"totalDuration"`
+	TotalDuration  float64            `json:"totalDuration"`
 	AudioFile      string             `json:"audioFile"`
 }

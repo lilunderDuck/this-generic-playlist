@@ -33,6 +33,12 @@ export interface ITrackData {
 export const CODEC = {
   playlist_getAll$: registerProducer<IPlaylistItemData[]>("playlist_getAll"),
   playlist_create$: registerPlain<IPlaylistItemSchema, IPlaylistItemData>("playlist_create"),
+  playlist_resync$: registerPlain<{
+    playlistId: string
+  }, {
+    playlist: IPlaylistItemData
+    tracks: ITrackData[]
+  }>('playlist_resync'),
   track_getAll$: registerPlain<{
     playlistId: string
   }, ITrackData[]>('track_getAll')
