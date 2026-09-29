@@ -25,6 +25,10 @@ const dialog__header = css`
   align-items: center;
 `
 
+const dialog__bannerImg = css`
+  object-fit: contain;
+`
+
 export default function PlaylistBannerDialogContent(props: IPlaylistBannerDialogContentProps) {
   const [currentBannerIndex, setCurrentBannerIndex] = createSignal(0)
 
@@ -68,7 +72,7 @@ export default function PlaylistBannerDialogContent(props: IPlaylistBannerDialog
           </Tooltip>
         </header>
         <ZoomDisplay>
-          <img draggable={false} src={playlistBannerUrl(props.playlistId$, props.banners$[currentBannerIndex()])} />
+          <img class={dialog__bannerImg} draggable={false} src={playlistBannerUrl(props.playlistId$, props.banners$[currentBannerIndex()])} />
         </ZoomDisplay>
       </div>
     </ZoomAndPanProvider>
