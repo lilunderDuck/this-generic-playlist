@@ -7,7 +7,6 @@ import { render } from 'solid-js/web'
 import App from './app'
 import { Router } from '@solidjs/router'
 import { duckDotLog } from './utils'
-import "./monke_patch"
 
 declare global {
   const APP_NAME: string
