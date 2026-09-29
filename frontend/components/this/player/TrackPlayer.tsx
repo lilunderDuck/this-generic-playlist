@@ -10,9 +10,7 @@ import { formatSecondsToMMSS } from "../../../utils"
 const player__root = css`
   width: 100%;
   height: 6.65rem;
-  position: fixed;
-  bottom: 0;
-  background-color: var(--mantle);
+  background-color: var(--base);
   user-select: none;
 `
 
@@ -53,7 +51,7 @@ const player__playButton = css`
   }
 `
 
-export function TrackPlayer() {
+export function TrackPlayer(props: { class?: string }) {
   const { trackPlayer$, playlistState$ } = usePlaylistContext()
 
   const togglePlaying = () => {
@@ -68,7 +66,7 @@ export function TrackPlayer() {
   const shouldDisable = () => playlistState$.currentTrack$() == null
 
   return (
-    <section class={player__root}>
+    <section class={`${player__root} ${props.class ?? ''}`}>
       <div class={player__timeSeekingBar}>
         <div class={player__currentTime}>{formatSecondsToMMSS(trackPlayer$.currentProgress$())}</div>
         <MediaProgressSlider player$={trackPlayer$} disabled={shouldDisable()} />

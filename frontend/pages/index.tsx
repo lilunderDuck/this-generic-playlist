@@ -3,12 +3,13 @@ import { BsPlus } from 'solid-icons/bs'
 import { For, onCleanup, Show } from 'solid-js'
 // ...
 import { root } from '..'
-import { Button, ButtonSize, ButtonVariant, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip } from '../components'
+import { Button, ButtonSize, ButtonVariant, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip, TrackPlayer } from '../components'
 import { usePlaylistContext } from '../provider'
 
 const home__root = css`
   width: 100%;
   height: 100%;
+  position: relative;
 `
 
 const home__header = css`
@@ -38,7 +39,7 @@ const home__content = css`
 `
 
 export default function Home() {
-  const { sidebarInfo$, playlistItems$ } = usePlaylistContext()
+  const { sidebarInfo$, playlistItems$, playlistState$ } = usePlaylistContext()
 
   root.className = home__rootElement
   onCleanup(() => root.className = "")
@@ -62,6 +63,10 @@ export default function Home() {
             )}
           </For>
         </div>
+
+        <Show when={playlistState$.currentTrack$()}>
+          <TrackPlayer class={css`position: absolute; width: calc(100% - 20px); left: 10px; bottom: 10px; border-radius: 6px;`} />
+        </Show>
       </main>
       <Show when={sidebarInfo$()}>
         <PlaylistSidebarItemInfo info$={sidebarInfo$()!} />

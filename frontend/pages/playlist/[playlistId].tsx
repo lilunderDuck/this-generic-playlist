@@ -139,7 +139,7 @@ export default function PlaylistTracksPage() {
           </For>
         </section>
       </main>
-      <TrackPlayer />
+      <TrackPlayer class={css`position: fixed; bottom: 0;`} />
     </Show>
   )
 }
