@@ -3,6 +3,8 @@ package core
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 const FN_ROUTE_NAME = "/teleporter/"
@@ -58,7 +60,7 @@ func RegisterFnAction(name string, handler func() error) {
 
 func RegisterFnProducer[ReturnValue any](
 	name string,
-	handler func() (*ReturnValue, error),
+	handler func() (ReturnValue, error),
 ) {
 	Register(FN_ROUTE_NAME+name, func(res http.ResponseWriter, req *http.Request) {
 		if !isPostRequest(res, req) {
@@ -98,4 +100,13 @@ func RegisterFnConsumer[Data any](
 
 		ResponseInText(res, http.StatusOK, "ok")
 	})
+}
+
+func GetCurrentExecDir() (currentPath string) {
+	folderPath, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+
+	return filepath.Dir(folderPath)
 }

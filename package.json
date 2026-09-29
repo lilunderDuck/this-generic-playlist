@@ -24,6 +24,7 @@
     "@solidjs/router": "^0.15.1",
     "molcss": "^0.2.5",
     "solid-icons": "1.1.0",
-    "solid-js": "^1.9.5"
+    "solid-js": "^1.9.5",
+    "solid-marked": "^0.8.0"
   }
 }

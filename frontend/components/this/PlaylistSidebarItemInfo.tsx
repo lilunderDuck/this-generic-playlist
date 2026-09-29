@@ -2,7 +2,7 @@ import { css } from "molcss"
 import { playlistCoverIconUrl, type IPlaylistItemData } from "../../api"
 import { BiSolidPlaylist, BiSolidTime } from "solid-icons/bi"
 import { For } from "solid-js"
-import { Button, ButtonVariant } from "../ui"
+import { Button, ButtonVariant, MarkdownText } from "../ui"
 import { formatSecondsToMMSS } from "../../utils"
 import { Author } from "./Author"
 
@@ -131,7 +131,9 @@ export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
         </For>
       </section>
       <section class={sidebar__descriptionSection}>
-        <p>{props.info$.description}</p>
+        <MarkdownText>
+          {props.info$.description}
+        </MarkdownText>
       </section>
       <section class={sidebar__bottomBarSection}>
         <Button variant$={ButtonVariant.DANGER}>Close</Button>

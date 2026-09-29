@@ -6,6 +6,7 @@ import App from './app'
 import { Router } from '@solidjs/router'
 // @ts-ignore
 import routes from '~solid-pages'
+import "./monke_patch"
 
 export const root = document.getElementById('root')!
 

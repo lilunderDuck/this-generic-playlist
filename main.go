@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"toast/backend/core"
+	"toast/backend/playlist"
 )
 
 func main() {
@@ -11,6 +12,8 @@ func main() {
 		fmt.Println("hello world")
 		return nil
 	})
+
+	playlist.RegisterFunctions()
 
 	assetsServer := core.NewAssetsServer("toast-playlist")
 	assetsServer.MustOpen()

@@ -26,8 +26,6 @@ type Entry struct {
 	Value  []byte
 }
 
-const ENTRY_SEPERATOR = "■"
-
 func (e *Entry) toLine() []byte {
 	// Format key length as 4 digits and value length as 6 digits with leading zeroes
 	keyLen := fmt.Sprintf("%04d", len(e.Key))

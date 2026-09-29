@@ -1,6 +1,6 @@
 import { css } from 'molcss'
 import { BsPlus } from 'solid-icons/bs'
-import { onCleanup, Show } from 'solid-js'
+import { For, onCleanup, Show } from 'solid-js'
 // ...
 import { root } from '..'
 import { Button, ButtonSize, ButtonVariant, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip } from '../components'
@@ -37,7 +37,7 @@ const home__content = css`
 `
 
 export default function Home() {
-  const { sidebarInfo$ } = usePlaylistContext()
+  const { sidebarInfo$, playlistItems$ } = usePlaylistContext()
 
   root.className = home__rootElement
   onCleanup(() => root.className = "")
@@ -55,23 +55,11 @@ export default function Home() {
           <div />
         </header>
         <div class={home__content}>
-          <PlaylistItem 
-            id='mihoshiho_it_will_be_okay_495491'
-            name='Mihoshiho: It Will Be Okay! OST'
-            author={{
-              name: "redtomatochicken",
-              url: "https://www.youtube.com/@redtomato8188"
-            }}
-            coverIconImage='cover.png'
-          />
-          <PlaylistItem 
-            id='untitled_goose_game_ost_395813'
-            name='Untitled Goose Game OST'
-            author={{
-              name: "Claude Debussy, Dan Golding",
-            }}
-            coverIconImage='cover.jpg'
-          />
+          <For each={playlistItems$()}>
+            {it => (
+              <PlaylistItem {...it} />
+            )}
+          </For>
         </div>
       </main>
       <Show when={sidebarInfo$()}>

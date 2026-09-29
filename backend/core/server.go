@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"toast/backend/debug"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func CreateServer(port string) *http.Server {
@@ -27,11 +29,21 @@ type RouteCloseFn func()
 
 type JSON map[string]any
 
+var validate = validator.New()
+
 // Reads a JSON request body into the provided Go variable `out`.
 // It returns an error if the decoding fails.
 func ReadRequestInJson[T any](request *http.Request) (*T, error) {
 	var out T
 	err := json.NewDecoder(request.Body).Decode(&out)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := validate.Struct(out); err != nil {
+		return nil, err
+	}
+
 	return &out, err
 }
 

@@ -1,34 +1,33 @@
 package playlist
 
 import (
-	"time"
+	"path/filepath"
 	"toast/backend/core"
+	"toast/backend/db"
+	"toast/backend/utils"
 )
 
-type PlaylistItemSchema struct {
-	Name           string             `json:"name"`
-	Author         PlaylistAuthorInfo `json:"author,omitempty"`
-	CoverIconImage string             `json:"coverIconImage"`
-	BannerImages   []string           `json:"bannerImages,omitempty"`
-	Description    string             `json:"description,omitempty"`
-}
-
-type PlaylistItemData struct {
-	PlaylistItemSchema
-	Id                   string        `json:"id"`
-	TotalTrack           int           `json:"totalTrack"`
-	TotalRuntimeInSecond int           `json:"totalRuntimeInSecond"`
-	CreatedAt            time.Duration `json:"createdAt"`
-}
-
-type PlaylistAuthorInfo struct {
-	Name string `json:"name"`
-	Url  string `json:"url,omitempty"`
-}
-
 func RegisterFunctions() {
-	core.RegisterFn("playlist_create", func(data *PlaylistItemSchema) (*PlaylistItemData, error) {
-		return nil, nil
+	dataFolder := filepath.Join(core.GetCurrentExecDir(), "data/toast-playlist")
+	playlistsDb := db.New(dataFolder + "/playlists.db")
+	// tracksDb := db.New(dataFolder + "/tracks.db")
+	core.RegisterFnProducer("playlist_getAll", func() ([]PlaylistItemData, error) {
+		rawValue := playlistsDb.ValuesAsStringFast()
+		data, err := utils.ParseJsonString[[]PlaylistItemData](rawValue)
+		if err != nil {
+			return nil, err
+		}
+		return data, nil
 	})
-	// core.RegisterFn("playlist_add", )
+
+	core.RegisterFn("playlist_create", func(data *PlaylistItemSchema) (*PlaylistItemData, error) {
+		newData := NewPlaylistItemData(data)
+		rawData := []byte(utils.StringifyJson(newData))
+		err := playlistsDb.Put(newData.Id, rawData)
+		if err != nil {
+			return nil, nil
+		}
+
+		return newData, nil
+	})
 }

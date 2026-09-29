@@ -4,6 +4,7 @@ import { Author } from "./Author"
 import { BsPlayFill } from "solid-icons/bs"
 import "./PlaylistItem.css"
 import { Button, ButtonSize, Tooltip } from "../ui"
+import { usePlaylistContext } from "../../provider"
 
 const item__root = css`
   width: 11.5rem;
@@ -50,22 +51,25 @@ const item__openDirectlyBtn = css`
 `
 
 export function PlaylistItem(props: IPlaylistItemData) {
+  const { setSidebarInfo$ } = usePlaylistContext()
   return (
-    <div class={item__root} id="item_root">
-      <div 
-        class={`${item__coverIcon} ${props.coverIconImage ? item__coverIconHasIcon : item__coverIconEmpty}`}
-        style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage!)}')`}
-      >
-        <Tooltip label$="Play this one">
-          <Button size$={ButtonSize.ICON} class={item__openDirectlyBtn} id="item__openDirectlyBtn">
-            <BsPlayFill size={27} />
-          </Button>
-        </Tooltip>
+    <Tooltip label$="Click to show playlist info" placement$="bottom">
+      <div class={item__root} id="item_root" onClick={() => setSidebarInfo$(props)}>
+        <div 
+          class={`${item__coverIcon} ${props.coverIconImage ? item__coverIconHasIcon : item__coverIconEmpty}`}
+          style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage!)}')`}
+        >
+          <Tooltip label$="Play this one">
+            <Button size$={ButtonSize.ICON} class={item__openDirectlyBtn} id="item__openDirectlyBtn">
+              <BsPlayFill size={27} />
+            </Button>
+          </Tooltip>
+        </div>
+        <div class={item__nameWrap}>
+          <h3>{props.name}</h3>
+          <Author info$={props.author} />
+        </div>
       </div>
-      <div class={item__nameWrap}>
-        <h3>{props.name}</h3>
-        <Author info$={props.author} />
-      </div>
-    </div>
+    </Tooltip>
   )
 }
