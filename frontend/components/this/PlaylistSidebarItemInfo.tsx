@@ -92,31 +92,31 @@ const sidebar__bottomBarSection = css`
   padding-right: 10px;
 `
 
-export function PlaylistSidebarItemInfo(props: IPlaylistItemData) {
+export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
   const stats = [
-    { icon$: BiSolidPlaylist, stat$: `Contain ${props.totalTrack} tracks` },
-    { icon$: BiSolidTime, stat$: `Total playlist runtime is ${formatSecondsToMMSS(props.totalRuntimeInSecond)}` },
+    { icon$: BiSolidPlaylist, stat$: `Contain ${props.info$.totalTrack} tracks` },
+    { icon$: BiSolidTime, stat$: `Total playlist runtime is ${formatSecondsToMMSS(props.info$.totalRuntimeInSecond)}` },
     // { icon$: BsCalendar, stat$: "Playlist created at 10:40 AM, 10/04/2024" },
   ]
 
   const pickRandomBanner = () => {
-    if (!props.bannerImages) return ''
-    const index = Math.floor(Math.random() * props.bannerImages.length)
-    return props.bannerImages[index]
+    if (!props.info$.bannerImages) return ''
+    const index = Math.floor(Math.random() * props.info$.bannerImages.length)
+    return props.info$.bannerImages[index]
   }
 
   return (
     <aside 
       class={sidebar__root} 
-      style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage ?? '')}');--playlist-banner-url:url('${playlistCoverIconUrl(props.id, pickRandomBanner())}')`}
+      style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.info$.id, props.info$.coverIconImage ?? '')}');--playlist-banner-url:url('${playlistCoverIconUrl(props.info$.id, pickRandomBanner())}')`}
     >
       <section class={sidebar__bannerSection}>
         <div class={`${sidebar__banner} ${sidebar__bannerExistBanner}`} />
         <div class={sidebar__coverIconWrap}>
-          <div class={`${sidebar__coverIcon} ${props.coverIconImage ? sidebar__coverIconHasIcon : sidebar__coverIconEmpty}`} />
+          <div class={`${sidebar__coverIcon} ${props.info$.coverIconImage ? sidebar__coverIconHasIcon : sidebar__coverIconEmpty}`} />
           <div>
-            <h1 class={sidebar__playlistName}>{props.name}</h1>
-            <Author info$={props.author} />
+            <h1 class={sidebar__playlistName}>{props.info$.name}</h1>
+            <Author info$={props.info$.author} />
           </div>
         </div>
       </section>
@@ -131,7 +131,7 @@ export function PlaylistSidebarItemInfo(props: IPlaylistItemData) {
         </For>
       </section>
       <section class={sidebar__descriptionSection}>
-        <p>{props.description}</p>
+        <p>{props.info$.description}</p>
       </section>
       <section class={sidebar__bottomBarSection}>
         <Button variant$={ButtonVariant.DANGER}>Close</Button>

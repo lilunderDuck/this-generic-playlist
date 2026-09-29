@@ -1,8 +1,10 @@
 import { css } from 'molcss'
-import { root } from '..'
-import { onCleanup } from 'solid-js'
-import { Button, ButtonSize, ButtonVariant, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip } from '../components'
 import { BsPlus } from 'solid-icons/bs'
+import { onCleanup, Show } from 'solid-js'
+// ...
+import { root } from '..'
+import { Button, ButtonSize, ButtonVariant, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip } from '../components'
+import { usePlaylistContext } from '../provider'
 
 const home__root = css`
   width: 100%;
@@ -35,8 +37,9 @@ const home__content = css`
 `
 
 export default function Home() {
-  root.className = home__rootElement
+  const { sidebarInfo$ } = usePlaylistContext()
 
+  root.className = home__rootElement
   onCleanup(() => root.className = "")
 
   return (
@@ -71,30 +74,9 @@ export default function Home() {
           />
         </div>
       </main>
-      {/* <PlaylistSidebarItemInfo 
-        id='untitled_goose_game_ost_395813'
-        name='Untitled Goose Game OST'
-        author={{
-          name: "Claude Debussy, Dan Golding",
-        }}
-        coverIconImage='cover.jpg'
-        bannerImage='banner.jpg'
-        description="The soundtrack in the game: Untitled Goose Game - a slapstick-stealth-sandbox, where you are a goose let loose on an unsuspecting village. Make your way around town, from peoples' back gardens to the high street shops to the village green, setting up pranks, stealing hats, honking a lot, and generally ruining everyone's day."
-      /> */}
-      <PlaylistSidebarItemInfo 
-        id='mihoshiho_it_will_be_okay_495491'
-        name='Mihoshiho: It Will Be Okay! OST'
-        author={{
-          name: "redtomatochicken",
-          url: "https://www.youtube.com/@redtomato8188"
-        }}
-        coverIconImage='cover.png'
-        bannerImages={['banner.jpg', 'banner_2.jpg', 'banner_3.jpg']}
-        description="A soundtrack for an adventure RPG game where absolutely nothing bad happens!"
-        createdAt={Date.now()}
-        totalRuntimeInSecond={1305}
-        totalTrack={13}
-      />
+      <Show when={sidebarInfo$()}>
+        <PlaylistSidebarItemInfo info$={sidebarInfo$()!} />
+      </Show>
     </>
   )
 }
