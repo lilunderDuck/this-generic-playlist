@@ -1,11 +1,12 @@
 import { css } from "molcss"
-import { createAsync, useParams } from "@solidjs/router"
+import { A, createAsync, useParams } from "@solidjs/router"
 import { createEffect, For, Show } from "solid-js"
 // ...
 import { CODEC, playlistBannerUrl, playlistCoverIconUrl } from "../../api"
 import { LoopingState, usePlaylistContext } from "../../provider"
-import { Author, TrackHeader, TrackItem, TrackPlayer } from "../../components"
+import { Author, Button, ButtonSize, ButtonVariant, Tooltip, TrackHeader, TrackItem, TrackPlayer } from "../../components"
 import { formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
+import { BsArrowLeft } from "solid-icons/bs"
 
 const playlist__root = css`
   width: 100%;
@@ -19,6 +20,13 @@ const playlist__header = css`
   background-size: cover;
   position: relative;
   user-select: none;
+  & #playlist__goBackBtn {
+    opacity: 0.35;
+  }
+
+  & #playlist__goBackBtn:hover {
+    opacity: 1;
+  }
 `
 
 const playlist__headerShadow = css`
@@ -27,6 +35,8 @@ const playlist__headerShadow = css`
   background: linear-gradient(to top, var(--crust) 0%, transparent 100%);
   position: absolute;
   bottom: 0;
+  padding-inline: 20px;
+  padding-top: 5px;
 `
 
 const playlist__info = css`
@@ -60,6 +70,12 @@ const playlist__coverIconEmpty = css`
 const playlist__runtimeStat = css`
   margin-top: 15px;
   font-size: 14px;
+`
+
+const playlist__goBackBtnWrapper = css`
+  position: absolute;
+  top: 3px;
+  left: 20px;
 `
 
 function playlistTracksData() {
@@ -103,7 +119,16 @@ export default function PlaylistTracksPage() {
               </div>
             </div>
           </div>
-          <div class={playlist__headerShadow}></div>
+          <div class={playlist__headerShadow} />
+          <div class={playlist__goBackBtnWrapper} id="playlist__goBackBtn">
+            <Tooltip label$="Go back to home">
+              <A href="/">
+                <Button size$={ButtonSize.ICON_LARGE}>
+                  <BsArrowLeft size={20} />
+                </Button>
+              </A>
+            </Tooltip>
+          </div>
         </header>
         <TrackHeader />
         <section class={css`padding-bottom: 10rem;`} data-is-repeat-once={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}>
