@@ -1,6 +1,7 @@
 import { createContext, createSignal, onMount, useContext, type Accessor, type ParentProps, type Setter } from "solid-js";
 import { CODEC, type IPlaylistItemData } from "../api";
 import { usePersistedSignal } from "../hooks/usePersistedSignal";
+import { duckBeginTimer, duckDotLog, duckDotLogWithLabel } from "../utils";
 
 interface IPlaylistContext {
   sidebarInfo$: Accessor<IPlaylistItemData | null>
@@ -18,14 +19,17 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
   const [playlistItems, setPlaylistItems] = createSignal<IPlaylistItemData[]>([])
 
   onMount(async() => {
+    const stopTimer = duckBeginTimer("begin the duck ritual, required: my insanity")
     const items = await CODEC.playlist_getAll$()
     setPlaylistItems(items)
     if (sidebarInfo()) {
-      console.log("[duck] resyncing sidebar info...")
+      duckDotLog("resyncing sidebar info...")
       const newSidebarInfo = items.find(it => it.id === sidebarInfo()!.id)!
       console.assert(newSidebarInfo !== undefined, `${sidebarInfo()?.id} does not exist!!`)
       setSidebarInfo(newSidebarInfo)
     }
+
+    stopTimer()
   })
 
   return (

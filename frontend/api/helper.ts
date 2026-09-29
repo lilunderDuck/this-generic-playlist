@@ -1,8 +1,10 @@
+import { duckDotLog, duckDotLogWithLabel } from "../utils"
+
 const FN_ROUTE = "http://localhost:8000/teleporter/"
 
 export function registerPlain<In, Out>(name: string) {
   if (import.meta.env.DEV) {
-    console.log("REGISTERING duck_fn:" + name)
+    duckDotLogWithLabel("debug", "REGISTERING duck_fn:" + name)
   }
   return async(incomingData: In): Promise<Out> => {
     const response = await fetch(FN_ROUTE + name, {
@@ -20,7 +22,7 @@ export function registerPlain<In, Out>(name: string) {
 
 export function registerProducer<Out>(name: string) {
   if (import.meta.env.DEV) {
-    console.log("REGISTERING duck_fn:" + name)
+    duckDotLogWithLabel("debug", "REGISTERING duck_fn:" + name)
   }
   return async(): Promise<Out> => {
     const response = await fetch(FN_ROUTE + name, { method: "POST" })
@@ -35,7 +37,7 @@ export function registerProducer<Out>(name: string) {
 
 export function registerConsumer<In>(name: string) {
   if (import.meta.env.DEV) {
-    console.log("REGISTERING duck_fn:" + name)
+    duckDotLogWithLabel("debug", "REGISTERING duck_fn:" + name)
   }
   return async(incomingData: In): Promise<void> => {
     const response = await fetch(FN_ROUTE + name, {

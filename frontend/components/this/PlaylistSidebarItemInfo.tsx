@@ -5,6 +5,7 @@ import { For } from "solid-js"
 import { Button, ButtonVariant, MarkdownText } from "../ui"
 import { formatSecondsToMMSS } from "../../utils"
 import { Author } from "./Author"
+import { usePlaylistContext } from "../../provider"
 
 const sidebar__root = css`
   width: 55%;
@@ -93,6 +94,8 @@ const sidebar__bottomBarSection = css`
 `
 
 export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
+  const { setSidebarInfo$ } = usePlaylistContext()
+
   const stats = [
     { icon$: BiSolidPlaylist, stat$: `Contain ${props.info$.totalTrack} tracks` },
     { icon$: BiSolidTime, stat$: `Total playlist runtime is ${formatSecondsToMMSS(props.info$.totalRuntimeInSecond)}` },
@@ -103,6 +106,10 @@ export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
     if (!props.info$.bannerImages) return ''
     const index = Math.floor(Math.random() * props.info$.bannerImages.length)
     return props.info$.bannerImages[index]
+  }
+
+  const closeSidebar = () => {
+    setSidebarInfo$(null)
   }
 
   return (
@@ -136,8 +143,14 @@ export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
         </MarkdownText>
       </section>
       <section class={sidebar__bottomBarSection}>
-        <Button variant$={ButtonVariant.DANGER}>Close</Button>
-        <Button variant$={ButtonVariant.SECONDARY}>Play this one for me</Button>
+        <Button variant$={ButtonVariant.DANGER} onClick={closeSidebar}>
+          Close
+        </Button>
+        <a href={`/playlist/${props.info$.id}`}>
+          <Button variant$={ButtonVariant.SECONDARY}>
+            Play this one for me
+          </Button>
+        </a>
       </section>
     </aside>
   )
