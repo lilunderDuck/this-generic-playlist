@@ -1,11 +1,13 @@
 import { css } from "molcss"
 import { BsCaretLeftFill, BsCaretRightFill, BsPauseFill, BsPlayFill } from "solid-icons/bs"
 import { usePlaylistContext } from "../../../provider"
-import { Button, ButtonSize, ButtonVariant, MediaProgressSlider, Tooltip } from "../../ui"
+import { Button, ButtonSize, ButtonVariant, MediaProgressSlider, Spacer, Tooltip } from "../../ui"
 import { TrackLoopButton } from "./TrackLoopButton"
 import { Show } from "solid-js"
 import { MediaState } from "../../../hooks"
 import { formatSecondsToMMSS } from "../../../utils"
+import { playlistCoverIconUrl, playlistTrackUrl } from "../../../api"
+import { Author } from "../Author"
 
 const player__root = css`
   width: 100%;
@@ -37,6 +39,7 @@ const player__controls = css`
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-shrink: 0;
 `
 
 const player__playButton = css`
@@ -49,6 +52,36 @@ const player__playButton = css`
   &:disabled {
     opacity: 0.7;
   }
+`
+
+const player__coverIcon = css`
+  width: 4rem;
+  height: 4rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+`
+
+const player__coverIconHasIcon = css`
+  background: center center no-repeat var(--playlist-cover-icon-url);
+  background-size: cover;
+`
+
+const player__coverIconEmpty = css`
+  background-color: var(--base);
+`
+
+const player__currentTrackInfo = css`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+`
+
+const player__buttonRowRightSide = css`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 `
 
 export function TrackPlayer(props: { class?: string }) {
@@ -73,8 +106,14 @@ export function TrackPlayer(props: { class?: string }) {
         <div class={player__currentTime}>{formatSecondsToMMSS(trackPlayer$.totalDuration$())}</div>
       </div>
       <div class={player__controlsWrap}>
-        <div>
-          
+        <div class={player__currentTrackInfo}>
+          <Show when={playlistState$.currentTrack$()?.coverIconImage}>
+            <div class={`${player__coverIcon} ${playlistState$.currentTrack$()?.coverIconImage ? player__coverIconHasIcon : player__coverIconEmpty}`} style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(playlistState$.currentPlaylist$()!.id, playlistState$.currentTrack$()!.coverIconImage!)}')`} />
+            <div>
+              <h3>{playlistState$.currentTrack$()?.name}</h3>
+              <Author info$={playlistState$.currentTrack$()?.author} />
+            </div>
+          </Show>
         </div>
         <div class={player__controls}>
           <Tooltip label$="Go to previous track">
@@ -107,7 +146,8 @@ export function TrackPlayer(props: { class?: string }) {
             </Button>
           </Tooltip>
         </div>
-        <div>
+        <div class={player__buttonRowRightSide}>
+          <Spacer />
           <TrackLoopButton />
         </div>
       </div>

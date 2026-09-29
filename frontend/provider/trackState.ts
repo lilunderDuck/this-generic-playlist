@@ -61,6 +61,7 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
       setCurrentTrackList(currentTracks)
       duckDotLogWithLabel("playlist", "synced all required data for", currentPlaylist.name)
     },
+    currentPlaylist$: currentPlaylist,
     currentTrackList$: currentTrackList,
     loopingState$: loopingState,
     setLoopingState$: setLoopingState,
