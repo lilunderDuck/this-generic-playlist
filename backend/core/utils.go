@@ -20,7 +20,7 @@ func isPostRequest(res http.ResponseWriter, req *http.Request) bool {
 
 func RegisterFn[Data any, ReturnValue any](
 	name string,
-	handler func(data *Data) (*ReturnValue, error),
+	handler func(data *Data) (ReturnValue, error),
 ) {
 	Register(FN_ROUTE_NAME+name, func(res http.ResponseWriter, req *http.Request) {
 		if !isPostRequest(res, req) {
@@ -29,13 +29,13 @@ func RegisterFn[Data any, ReturnValue any](
 
 		requestData, err := ReadRequestInJson[Data](req)
 		if err != nil {
-			ResponseInText(res, http.StatusBadRequest, fmt.Sprintf("the duck ritual cannot parse the incoming data so it can pass it to %s: %#v", name, err))
+			ResponseInText(res, http.StatusBadRequest, fmt.Sprintf("the duck ritual cannot parse the incoming data so it can pass it to %s: %v", name, err))
 			return
 		}
 
 		returnVal, err := handler(requestData)
 		if err != nil {
-			ResponseInText(res, http.StatusInternalServerError, fmt.Sprintf("duck has exploded while doing the duck ritual: %#v", err))
+			ResponseInText(res, http.StatusInternalServerError, fmt.Sprintf("duck has exploded while doing the duck ritual: %v", err))
 			return
 		}
 

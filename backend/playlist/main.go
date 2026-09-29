@@ -30,4 +30,14 @@ func RegisterFunctions() {
 
 		return newData, nil
 	})
+
+	emptyTrackData := []TrackData{}
+	core.RegisterFn("track_getAll", func(data *GetAllTrackDataParam) ([]TrackData, error) {
+		tracksData, err := utils.ReadJsonFile[[]TrackData](dataFolder + "/playlists/" + data.PlaylistId + "/" + "tracks.json")
+		if err != nil {
+			return emptyTrackData, err
+		}
+
+		return tracksData, nil
+	})
 }

@@ -32,3 +32,16 @@ func NewPlaylistItemData(data *PlaylistItemSchema) *PlaylistItemData {
 		CreatedAt:            time.Now().UnixMilli(),
 	}
 }
+
+type GetAllTrackDataParam struct {
+	PlaylistId string `json:"playlistId" validate:"required"`
+}
+
+type TrackData struct {
+	Name           string             `json:"name"`
+	Id             int                `json:"id"`
+	Author         PlaylistAuthorInfo `json:"author,omitempty"`
+	CoverIconImage string             `json:"coverIconImage"`
+	TotalDuration  int                `json:"totalDuration"`
+	AudioFile      string             `json:"audioFile"`
+}

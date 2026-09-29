@@ -1,4 +1,6 @@
 export * from "./PlaylistItem"
 export * from "./PlaylistSidebarItemInfo"
 export * from "./PlaylistSearchBar"
+export * from "./TrackHeader"
+export * from "./TrackItem"
 export * from "./Author"
