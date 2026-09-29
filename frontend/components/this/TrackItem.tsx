@@ -3,6 +3,7 @@ import { playlistCoverIconUrl, type ITrackData } from "../../api"
 import { header__authorWidth, header__durationWidth, header__indexWidth, header__nameWidth } from "./TrackHeader"
 import { Author } from "./Author"
 import { formatSecondsToMMSS } from "../../utils"
+import { usePlaylistContext } from "../../provider"
 
 const item__root = css`
   width: 100%;
@@ -14,10 +15,18 @@ const item__root = css`
   padding-block: 5px;
   border-radius: 6px;
   color: var(--subtext0);
+`
+
+const item__notCurrentTrack = css`
   &:hover {
     background-color: var(--base);
     color: var(--text);
   }
+`
+
+const item__currentTrack = css`
+  background-color: var(--surface0);
+  color: var(--text);
 `
 
 const item__seperatorDummy = css`
@@ -58,9 +67,16 @@ interface ITrackItemProps extends ITrackData {
 }
 
 export function TrackItem(props: ITrackItemProps) {
+  const { trackState$ } = usePlaylistContext()
+
+  const isCurrentTrack = () => trackState$.currentTrack$()?.id === props.id
+
   return (
-    <div class={item__root}>
-      <div class={`${header__indexWidth} ${item__seperatorDummy} ${item__trackItemIndex}`}>
+    <div class={`${item__root} ${isCurrentTrack() ? item__currentTrack : item__notCurrentTrack}`}>
+      <div 
+        class={`${header__indexWidth} ${item__seperatorDummy} ${item__trackItemIndex}`}
+        onClick={() => trackState$.playTrack$(props)}
+      >
         {props.index$}
       </div>
       <div class={`${header__nameWidth} ${item__trackNameWrap}`}>

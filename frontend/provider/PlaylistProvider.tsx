@@ -1,12 +1,16 @@
 import { createContext, createSignal, onMount, useContext, type Accessor, type ParentProps, type Setter } from "solid-js";
 import { CODEC, type IPlaylistItemData } from "../api";
 import { usePersistedSignal } from "../hooks/usePersistedSignal";
-import { duckBeginTimer, duckDotLog, duckDotLogWithLabel } from "../utils";
+import { duckBeginTimer, duckDotLog } from "../utils";
+import { createMediaPlayer, type MediaPlayer } from "../hooks";
+import { createTrackState, type TrackState } from "./trackState";
 
 interface IPlaylistContext {
   sidebarInfo$: Accessor<IPlaylistItemData | null>
   setSidebarInfo$: Setter<IPlaylistItemData | null>
   playlistItems$: Accessor<IPlaylistItemData[]>
+  trackPlayer$: MediaPlayer<"audio">
+  trackState$: TrackState
 }
 
 const Context = createContext<IPlaylistContext>()
@@ -32,12 +36,18 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
     stopTimer()
   })
 
+  const trackPlayer = createMediaPlayer("audio")
+  const trackState = createTrackState(trackPlayer)
+
   return (
     <Context.Provider value={{
       setSidebarInfo$: setSidebarInfo,
       sidebarInfo$: sidebarInfo,
-      playlistItems$: playlistItems
+      playlistItems$: playlistItems,
+      trackPlayer$: trackPlayer,
+      trackState$: trackState
     }}>
+      <trackPlayer.Player$ />
       {props.children}
     </Context.Provider>
   )

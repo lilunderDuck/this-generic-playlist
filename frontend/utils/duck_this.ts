@@ -1,7 +1,8 @@
 const predefinedLabels = {
   debug: "#525eff",
   timing: "#25cbbe",
-  early: "#dd6e29"
+  early: "#dd6e29",
+  player: "#dd2977"
 }
 
 const BASE_STYLE = "color: #11111b; padding-inline: 5px; border-radius: 6px; font-weight: bold"

@@ -19,6 +19,14 @@ duckDotLog(
   `Version:     1.0.0-4112c7b \n`,
 )
 
+duckDotLog("wth-app-stack\n",
+  `solid-js   -> library used to make the thing you see right here \n`,
+  `golang     -> also the thing that dealing with loading/saving playlist data \n`,
+  `catpucchin -> theme used in this app \n`,
+  `catcom     -> allows communication between frontend (the one you see here) and backend (the thing that messing with playlist data) \n`,
+  "\n"
+)
+
 export const root = document.getElementById('root')!
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {

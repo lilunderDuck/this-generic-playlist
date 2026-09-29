@@ -1,11 +1,11 @@
 import { css } from "molcss"
 import { createAsync, useParams } from "@solidjs/router"
 import { CODEC, playlistBannerUrl, playlistCoverIconUrl } from "../../api"
-import { For, Show } from "solid-js"
+import { createEffect, For, onCleanup, Show } from "solid-js"
 import { usePlaylistContext } from "../../provider"
-import { Author, TrackHeader, TrackItem } from "../../components"
+import { Author, TrackHeader, TrackItem, TrackPlayer } from "../../components"
 import { root } from "../.."
-import { duckBeginTimer, formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
+import { duckBeginTimer, duckDotLog, duckDotLogWithLabel, formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
 
 const playlist__root = css`
   width: 100%;
@@ -77,39 +77,49 @@ function playlistTracksData() {
 
 export default function PlaylistTracksPage() {
   const param = useParams()
-  const { playlistItems$ } = usePlaylistContext()
+  const { playlistItems$, trackState$ } = usePlaylistContext()
 
   const tracksData = playlistTracksData()
   const currentPlaylist = () => playlistItems$().find(it => it.id === param.playlistId!)!
+  trackState$.setCurrentPlaylist$(currentPlaylist())
 
-  root.className = `${scrollbar} ${scrollbar__vertical} ${scrollbar__invs}`
+  createEffect(() => {
+    const tracks = tracksData()
+    if (!tracks) return
+
+    duckDotLog("state transition - audio player dispatch LOAD_TRACKS")
+    trackState$.setCurrentTrackList$(tracks)
+  })
 
   return (
     <Show when={tracksData()}>
-      <header class={playlist__header} style={`--playlist-banner-url:url('${playlistBannerUrl(currentPlaylist().id, currentPlaylist().bannerImages?.[0]!)}')`}>
-        <div class={playlist__info}>
-          <div 
-            class={`${playlist__coverIcon} ${currentPlaylist().coverIconImage ? playlist__coverIconHasIcon : playlist__coverIconEmpty}`}
-            style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(param.playlistId!, currentPlaylist().coverIconImage ?? '')}')`}
-          />
-          <div>
-            <h1>{currentPlaylist().name}</h1>
-            <Author info$={currentPlaylist().author} />
-            <div class={playlist__runtimeStat}>
-              {currentPlaylist().totalTrack} total tracks • {formatSecondsToMMSS(currentPlaylist().totalRuntimeInSecond)} in total time
+      <main class={`${playlist__root} ${scrollbar} ${scrollbar__vertical} ${scrollbar__invs}`}>
+        <header class={playlist__header} style={`--playlist-banner-url:url('${playlistBannerUrl(currentPlaylist().id, currentPlaylist().bannerImages?.[0]!)}')`}>
+          <div class={playlist__info}>
+            <div 
+              class={`${playlist__coverIcon} ${currentPlaylist().coverIconImage ? playlist__coverIconHasIcon : playlist__coverIconEmpty}`}
+              style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(param.playlistId!, currentPlaylist().coverIconImage ?? '')}')`}
+            />
+            <div>
+              <h1>{currentPlaylist().name}</h1>
+              <Author info$={currentPlaylist().author} />
+              <div class={playlist__runtimeStat}>
+                {currentPlaylist().totalTrack} total tracks • {formatSecondsToMMSS(currentPlaylist().totalRuntimeInSecond)} in total time
+              </div>
             </div>
           </div>
-        </div>
-        <div class={playlist__headerShadow}></div>
-      </header>
-      <TrackHeader />
-      <section class={css`padding-bottom: 10rem;`}>
-        <For each={tracksData()!}>
-          {(it, index) => (
-            <TrackItem {...it} index$={index() + 1} playlistId$={param.playlistId!} />
-          )}
-        </For>
-      </section>
+          <div class={playlist__headerShadow}></div>
+        </header>
+        <TrackHeader />
+        <section class={css`padding-bottom: 10rem;`}>
+          <For each={tracksData()!}>
+            {(it, index) => (
+              <TrackItem {...it} index$={index() + 1} playlistId$={param.playlistId!} />
+            )}
+          </For>
+        </section>
+      </main>
+      <TrackPlayer />
     </Show>
   )
 }

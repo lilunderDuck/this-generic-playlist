@@ -8,3 +8,7 @@ export function playlistCoverIconUrl(playlistId: string, fileName: string) {
 export function playlistBannerUrl(playlistId: string, fileName: string) {
   return `${ASSETS_SERVER}/local-assets/data/toast-playlist/playlists/${playlistId}/banner/${fileName}` as const
 }
+
+export function playlistTrackUrl(playlistId: string, fileName: string) {
+  return `${ASSETS_SERVER}/local-assets/data/toast-playlist/playlists/${playlistId}/track/${fileName}` as const
+}

@@ -10,6 +10,8 @@ import { RangeInput } from "./RangeInput"
 const slider = css`
   width: 100%;
   position: relative;
+  display: flex;
+  align-items: center;
 `
 
 const slider__input = css`
@@ -39,7 +41,7 @@ const slider__tooltip = css`
 
 interface IMediaProgressSlider {
   disabled?: boolean
-  player$: MediaPlayer<"video" | "audio">
+  player$: MediaPlayer<"video"> | MediaPlayer<"audio">
 }
 
 /**A component that renders the current progress of a video/audio and handles seeking. 

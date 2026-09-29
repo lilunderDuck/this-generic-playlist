@@ -4,3 +4,5 @@ export * from "./PlaylistSearchBar"
 export * from "./TrackHeader"
 export * from "./TrackItem"
 export * from "./Author"
+// ...
+export * from "./player"
