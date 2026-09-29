@@ -1,0 +1,139 @@
+import type { ParentProps } from "solid-js"
+// ...
+import __style from "./ZoomDisplay.module.css"
+import { css } from "molcss"
+// ...
+import { useZoomAndPanContext } from "./ZoomAndPanProvider"
+
+const zoomDisplay = css`
+  width: 100%;
+  height: 100%;
+  // positon: 'relative',
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const zoomDisplay__contentWrap = css`
+  width: 100%;
+  height: 100%;
+  transition: scale 0.25s cubic-bezier(0.17, 0.67, 0.11, 0.95);
+  scale: var(--image-scale);
+`
+
+const zoomDisplay__content = css`
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const zoomDisplay__limitContentHeight = css`
+  max-height: 100vh;
+`
+
+export function ZoomDisplay(props: ParentProps) {
+  const { imageXPos$, imageYPos$, _setImageXPos$, _setImageYPos$, zoomScale$ } = useZoomAndPanContext()
+
+  // Adapted from https://www.w3schools.com/howto/howto_js_draggable.asp
+  // slightly modified from https://gist.github.com/stephanbogner/75de4e84687ae6065fb0a4d81917543e
+  let targetElement!: HTMLDivElement
+  let draggableRef!: HTMLDivElement
+  let imgRef!: HTMLImageElement
+
+  let dragStartMouseX = 0, dragStartMouseY = 0, diffX = 0, diffY = 0, positionX = 0, positionY = 0
+  const dragStart = (e: MouseEvent) => {
+    if (zoomScale$() <= 1) {
+      dragStartMouseX = 0
+      dragStartMouseY = 0
+      diffX = 0
+      diffY = 0
+      positionX = 0
+      positionY = 0
+      return // don't do the dragging stuff
+    }
+
+    e.preventDefault()
+
+    dragStartMouseX = e.clientX
+    dragStartMouseY = e.clientY
+    listenOnMouseDrag()
+  }
+
+  const dragMove = (e: MouseEvent) => {
+    e.preventDefault()
+
+    let currentMouseX = e.clientX
+    let currentMouseY = e.clientY
+
+    diffX = dragStartMouseX - currentMouseX
+    diffY = dragStartMouseY - currentMouseY
+    
+    let newX = positionX - diffX
+    let newY = positionY - diffY
+
+    // const elementWidth = imgRef.offsetWidth, elementHeight = imgRef.offsetHeight
+
+    // // complex image bound checking stuff to make sure the image 
+    // // is not being dragged out of the page
+    // // 
+    // // note: this bound check is not really complete
+    // if (newX > elementWidth / 2 || newX < elementWidth / 2 * -1) {
+    //   return setImagePosition(prev => ({
+    //     ...prev,
+    //     y: newY
+    //   }))
+    // }
+
+    // if (newY > elementHeight / 2 || newY < elementHeight / 2 * -1) {
+    //   return setImagePosition(prev => ({
+    //     ...prev,
+    //     x: newX
+    //   }))
+    // }
+
+    _setImageXPos$(newX)
+    _setImageYPos$(newY)
+  }
+
+  const dragStop = () => {
+    positionX -= diffX
+    positionY -= diffY
+    cleanUpOnMouseReleases()
+  }
+
+  const listenOnMouseDrag = () => {
+    document.onmouseup = dragStop
+    document.onmousemove = dragMove
+  }
+  
+  const cleanUpOnMouseReleases = () => {
+    document.onmouseup = null
+    document.onmousemove = null
+  }
+
+  return (
+    <div 
+      class={zoomDisplay} 
+      onMouseDown={dragStart}
+      ref={targetElement}
+    >
+      <div
+        class={zoomDisplay__contentWrap}
+        style={`--image-scale:${zoomScale$()};transform:translate(${imageXPos$()}px,${imageYPos$()}px)`}
+        ref={draggableRef}
+      >
+        <div
+          class={`${zoomDisplay__content} ${zoomScale$() <= 1 ? zoomDisplay__limitContentHeight : ""}`}
+          id={__style.display}
+          ref={imgRef}
+        >
+          {props.children}
+        </div>
+      </div>
+    </div>
+  )
+}

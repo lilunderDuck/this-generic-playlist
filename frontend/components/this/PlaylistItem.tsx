@@ -1,10 +1,11 @@
 import { css } from "molcss"
 import { playlistCoverIconUrl, type IPlaylistItemData } from "../../api"
 import { Author } from "./Author"
-import { BsPlayFill } from "solid-icons/bs"
+import { BsImageFill, BsPlayFill } from "solid-icons/bs"
 import "./PlaylistItem.css"
 import { Button, ButtonSize, Tooltip } from "../ui"
 import { usePlaylistContext } from "../../provider"
+import { A } from "@solidjs/router"
 
 const item__root = css`
   width: 11.5rem;
@@ -60,9 +61,11 @@ export function PlaylistItem(props: IPlaylistItemData) {
           style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage!)}')`}
         >
           <Tooltip label$="Play this one">
-            <Button size$={ButtonSize.ICON} class={item__openDirectlyBtn} id="item__openDirectlyBtn">
-              <BsPlayFill size={27} />
-            </Button>
+            <A href={`/playlist/${props.id}`}>
+              <Button size$={ButtonSize.ICON} class={item__openDirectlyBtn} id="item__openDirectlyBtn">
+                <BsPlayFill size={27} />
+              </Button>
+            </A>
           </Tooltip>
         </div>
         <div class={item__nameWrap}>

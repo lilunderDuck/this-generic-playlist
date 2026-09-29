@@ -1,11 +1,14 @@
 import { css } from "molcss"
-import { playlistCoverIconUrl, type IPlaylistItemData } from "../../api"
+import { playlistBannerUrl, playlistCoverIconUrl, type IPlaylistItemData } from "../../api"
 import { BiSolidPlaylist, BiSolidTime } from "solid-icons/bi"
-import { For } from "solid-js"
-import { Button, ButtonVariant, MarkdownText } from "../ui"
+import { For, Show } from "solid-js"
+import { Button, ButtonSize, ButtonVariant, Dialog, MarkdownText, Tooltip } from "../ui"
 import { formatSecondsToMMSS } from "../../utils"
 import { Author } from "./Author"
 import { usePlaylistContext } from "../../provider"
+import { BsImageFill } from "solid-icons/bs"
+import { A } from "@solidjs/router"
+import PlaylistBannerDialogContent from "./PlaylistBannerDialogContent"
 
 const sidebar__root = css`
   width: 55%;
@@ -93,6 +96,14 @@ const sidebar__bottomBarSection = css`
   padding-right: 10px;
 `
 
+const sidebar__moreOptionsButtonRow = css`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  margin: 10px;
+`
+
 export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
   const { setSidebarInfo$ } = usePlaylistContext()
 
@@ -115,9 +126,24 @@ export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
   return (
     <aside 
       class={sidebar__root} 
-      style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.info$.id, props.info$.coverIconImage ?? '')}');--playlist-banner-url:url('${playlistCoverIconUrl(props.info$.id, pickRandomBanner())}')`}
+      style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.info$.id, props.info$.coverIconImage ?? '')}');--playlist-banner-url:url('${playlistBannerUrl(props.info$.id, pickRandomBanner())}')`}
     >
       <section class={sidebar__bannerSection}>
+        <div class={sidebar__moreOptionsButtonRow}>
+          <Show when={(props.info$.bannerImages?.length ?? 0) != 0}>
+            <Tooltip label$="See all banner images of this playlist">
+              <Dialog dialogContent$={(contentProps) => <PlaylistBannerDialogContent 
+                {...contentProps}
+                banners$={props.info$.bannerImages!}
+                playlistId$={props.info$.id}
+              />}>
+                <Button size$={ButtonSize.ICON} id="item__openDirectlyBtn">
+                  <BsImageFill />
+                </Button>
+              </Dialog>
+            </Tooltip>
+          </Show>
+        </div>
         <div class={`${sidebar__banner} ${sidebar__bannerExistBanner}`} />
         <div class={sidebar__coverIconWrap}>
           <div class={`${sidebar__coverIcon} ${props.info$.coverIconImage ? sidebar__coverIconHasIcon : sidebar__coverIconEmpty}`} />
