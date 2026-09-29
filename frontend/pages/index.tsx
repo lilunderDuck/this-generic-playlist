@@ -34,6 +34,7 @@ const home__content = css`
   margin: 10px;
   display: flex;
   gap: 10px;
+  border-radius: 6px;
 `
 
 export default function Home() {

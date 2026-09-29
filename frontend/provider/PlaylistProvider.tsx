@@ -1,5 +1,6 @@
-import { createContext, createSignal, useContext, type Accessor, type ParentProps, type Setter } from "solid-js";
+import { createContext, createSignal, onMount, useContext, type Accessor, type ParentProps, type Setter } from "solid-js";
 import { CODEC, type IPlaylistItemData } from "../api";
+import { usePersistedSignal } from "../hooks/usePersistedSignal";
 
 interface IPlaylistContext {
   sidebarInfo$: Accessor<IPlaylistItemData | null>
@@ -13,13 +14,20 @@ interface IPlaylistProviderProps {
 }
 
 export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
-  const [sidebarInfo, setSidebarInfo] = createSignal<IPlaylistItemData | null>(null)
+  const [sidebarInfo, setSidebarInfo] = usePersistedSignal<IPlaylistItemData | null>(localStorage, 'sidebar_info', null)
   const [playlistItems, setPlaylistItems] = createSignal<IPlaylistItemData[]>([])
 
-  CODEC.playlist_getAll$().then((itemData) => {
-    setPlaylistItems(itemData)
+  onMount(async() => {
+    const items = await CODEC.playlist_getAll$()
+    setPlaylistItems(items)
+    if (sidebarInfo()) {
+      console.log("[duck] resyncing sidebar info...")
+      const newSidebarInfo = items.find(it => it.id === sidebarInfo()!.id)!
+      console.assert(newSidebarInfo !== undefined, `${sidebarInfo()?.id} does not exist!!`)
+      setSidebarInfo(newSidebarInfo)
+    }
   })
-  
+
   return (
     <Context.Provider value={{
       setSidebarInfo$: setSidebarInfo,
