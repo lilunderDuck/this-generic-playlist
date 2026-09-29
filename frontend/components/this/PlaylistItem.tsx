@@ -1,7 +1,7 @@
 import { css } from "molcss"
 import { playlistCoverIconUrl, type IPlaylistItemData } from "../../api"
 import { Author } from "./Author"
-import { BsImageFill, BsPlayFill } from "solid-icons/bs"
+import { BsPlayFill } from "solid-icons/bs"
 import "./PlaylistItem.css"
 import { Button, ButtonSize, Tooltip } from "../ui"
 import { usePlaylistContext } from "../../provider"

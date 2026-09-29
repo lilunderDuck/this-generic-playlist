@@ -1,11 +1,11 @@
 import { css } from "molcss"
 import { createAsync, useParams } from "@solidjs/router"
+import { createEffect, For, Show } from "solid-js"
+// ...
 import { CODEC, playlistBannerUrl, playlistCoverIconUrl } from "../../api"
-import { createEffect, For, onCleanup, Show } from "solid-js"
-import { usePlaylistContext } from "../../provider"
+import { LoopingState, usePlaylistContext } from "../../provider"
 import { Author, TrackHeader, TrackItem, TrackPlayer } from "../../components"
-import { root } from "../.."
-import { duckBeginTimer, duckDotLog, duckDotLogWithLabel, formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
+import { formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
 
 const playlist__root = css`
   width: 100%;
@@ -68,27 +68,22 @@ function playlistTracksData() {
   console.assert(param.playlistId !== undefined, "playlistId is undefined!!!")
 
   return createAsync(async() => {
-    const stopTimer = duckBeginTimer("begin loading tracks for:" + param.playlistId)
     const tracks = await CODEC.track_getAll$({ playlistId: param.playlistId! })
-    stopTimer()
     return tracks
   })
 }
 
 export default function PlaylistTracksPage() {
   const param = useParams()
-  const { playlistItems$, trackState$ } = usePlaylistContext()
+  const { playlistItems$, playlistState$ } = usePlaylistContext()
 
   const tracksData = playlistTracksData()
   const currentPlaylist = () => playlistItems$().find(it => it.id === param.playlistId!)!
-  trackState$.setCurrentPlaylist$(currentPlaylist())
 
   createEffect(() => {
     const tracks = tracksData()
     if (!tracks) return
-
-    duckDotLog("state transition - audio player dispatch LOAD_TRACKS")
-    trackState$.setCurrentTrackList$(tracks)
+    playlistState$.syncData$(currentPlaylist(), tracks)
   })
 
   return (
@@ -111,7 +106,7 @@ export default function PlaylistTracksPage() {
           <div class={playlist__headerShadow}></div>
         </header>
         <TrackHeader />
-        <section class={css`padding-bottom: 10rem;`}>
+        <section class={css`padding-bottom: 10rem;`} data-is-repeat-once={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}>
           <For each={tracksData()!}>
             {(it, index) => (
               <TrackItem {...it} index$={index() + 1} playlistId$={param.playlistId!} />

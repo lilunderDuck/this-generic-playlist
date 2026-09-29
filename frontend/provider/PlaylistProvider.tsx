@@ -1,16 +1,16 @@
-import { createContext, createSignal, onMount, useContext, type Accessor, type ParentProps, type Setter } from "solid-js";
-import { CODEC, type IPlaylistItemData } from "../api";
-import { usePersistedSignal } from "../hooks/usePersistedSignal";
-import { duckBeginTimer, duckDotLog } from "../utils";
-import { createMediaPlayer, type MediaPlayer } from "../hooks";
-import { createTrackState, type TrackState } from "./trackState";
+import { createContext, createSignal, onMount, useContext, type Accessor, type ParentProps, type Setter } from "solid-js"
+import { CODEC, type IPlaylistItemData } from "../api"
+import { usePersistedSignal } from "../hooks/usePersistedSignal"
+import { duckDotLog } from "../utils"
+import { createMediaPlayer, type MediaPlayer } from "../hooks"
+import { createPlayerlistState, type PlayerlistState } from "./trackState"
 
 interface IPlaylistContext {
   sidebarInfo$: Accessor<IPlaylistItemData | null>
   setSidebarInfo$: Setter<IPlaylistItemData | null>
   playlistItems$: Accessor<IPlaylistItemData[]>
   trackPlayer$: MediaPlayer<"audio">
-  trackState$: TrackState
+  playlistState$: PlayerlistState
 }
 
 const Context = createContext<IPlaylistContext>()
@@ -23,7 +23,6 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
   const [playlistItems, setPlaylistItems] = createSignal<IPlaylistItemData[]>([])
 
   onMount(async() => {
-    const stopTimer = duckBeginTimer("begin the duck ritual, required: my insanity")
     const items = await CODEC.playlist_getAll$()
     setPlaylistItems(items)
     if (sidebarInfo()) {
@@ -32,12 +31,10 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
       console.assert(newSidebarInfo !== undefined, `${sidebarInfo()?.id} does not exist!!`)
       setSidebarInfo(newSidebarInfo)
     }
-
-    stopTimer()
   })
 
   const trackPlayer = createMediaPlayer("audio")
-  const trackState = createTrackState(trackPlayer)
+  const trackState = createPlayerlistState(trackPlayer)
 
   return (
     <Context.Provider value={{
@@ -45,7 +42,7 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
       sidebarInfo$: sidebarInfo,
       playlistItems$: playlistItems,
       trackPlayer$: trackPlayer,
-      trackState$: trackState
+      playlistState$: trackState
     }}>
       <trackPlayer.Player$ />
       {props.children}

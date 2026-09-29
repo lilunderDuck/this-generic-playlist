@@ -24,16 +24,16 @@ const playlistControl__smallButton = css`
 `
 
 export function TrackLoopButton() {
-  const { trackState$ } = usePlaylistContext()
+  const { playlistState$ } = usePlaylistContext()
 
-  let currentLoopingState = trackState$.loopingState$()
+  let currentLoopingState = playlistState$.loopingState$()
   const cycleThrough = () => {
     currentLoopingState += 1
-    trackState$.setLoopingState$(currentLoopingState % 3)
+    playlistState$.setLoopingState$(currentLoopingState % 3)
   }
 
   const getTooltipText = () => {
-    switch (trackState$.loopingState$()) {
+    switch (playlistState$.loopingState$()) {
       case LoopingState.REPEAT_ONCE:
         return "Repeat currently played track"
       case LoopingState.REPEAT_PLAYLIST:
@@ -48,18 +48,18 @@ export function TrackLoopButton() {
       <button 
         class={`${playlistControl__smallButton} ${playlistControl__button}`}
         onClick={cycleThrough}
-        disabled={trackState$.currentTrack$() == null}
+        disabled={playlistState$.currentTrack$() == null}
       >
         <Switch>
-          <Match when={trackState$.loopingState$() === LoopingState.NO_REPEAT}>
+          <Match when={playlistState$.loopingState$() === LoopingState.NO_REPEAT}>
             <TbRepeatOff size={25} />
           </Match>
 
-          <Match when={trackState$.loopingState$() === LoopingState.REPEAT_ONCE}>
+          <Match when={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}>
             <TbRepeatOnce size={25} />
           </Match>
 
-          <Match when={trackState$.loopingState$() === LoopingState.REPEAT_PLAYLIST}>
+          <Match when={playlistState$.loopingState$() === LoopingState.REPEAT_PLAYLIST}>
             <TbRepeat size={25} />
           </Match>
         </Switch>

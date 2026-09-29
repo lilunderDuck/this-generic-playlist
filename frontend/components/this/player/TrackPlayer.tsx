@@ -54,7 +54,7 @@ const player__playButton = css`
 `
 
 export function TrackPlayer() {
-  const { trackPlayer$, trackState$ } = usePlaylistContext()
+  const { trackPlayer$, playlistState$ } = usePlaylistContext()
 
   const togglePlaying = () => {
     if (trackPlayer$.state$() === MediaState.PLAYING) {
@@ -65,7 +65,7 @@ export function TrackPlayer() {
     trackPlayer$.play$()
   }
 
-  const shouldDisable = () => trackState$.currentTrack$() == null
+  const shouldDisable = () => playlistState$.currentTrack$() == null
 
   return (
     <section class={player__root}>

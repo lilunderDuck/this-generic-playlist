@@ -67,15 +67,18 @@ interface ITrackItemProps extends ITrackData {
 }
 
 export function TrackItem(props: ITrackItemProps) {
-  const { trackState$ } = usePlaylistContext()
+  const { playlistState$ } = usePlaylistContext()
 
-  const isCurrentTrack = () => trackState$.currentTrack$()?.id === props.id
+  const isCurrentTrack = () => playlistState$.currentTrack$()?.id === props.id
 
   return (
-    <div class={`${item__root} ${isCurrentTrack() ? item__currentTrack : item__notCurrentTrack}`}>
+    <div 
+      class={`${item__root} ${isCurrentTrack() ? item__currentTrack : item__notCurrentTrack}`}
+      data-is-current-track={isCurrentTrack()}
+    >
       <div 
         class={`${header__indexWidth} ${item__seperatorDummy} ${item__trackItemIndex}`}
-        onClick={() => trackState$.playTrack$(props)}
+        onClick={() => playlistState$.playTrack$(props, props.index$)}
       >
         {props.index$}
       </div>

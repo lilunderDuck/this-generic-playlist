@@ -1,6 +1,6 @@
 import { createEffect, createSignal, onCleanup } from "solid-js"
 // ...
-import { duckDotLogWithLabel, type HTMLAttributes, type Ref } from "../utils" // documentation only
+import { duckDotLogWithLabel, type AnyNoArgsFunction, type HTMLAttributes, type Ref } from "../utils" // documentation only
 import { MediaProgressSlider } from "../components" // documentation only
 
 type MediaPlayerProps<T extends "audio" | "video"> = Omit<
@@ -46,7 +46,7 @@ export const enum MediaState {
  * the media player and handle seeking.
  * @returns 
  */
-export function createMediaPlayer<T extends "audio" | "video">(type: T, listener?: Partial<IMediaPlayerListener>) {
+export function createMediaPlayer<T extends "audio" | "video">(type: T) {
   const [mediaState, setMediaState] = createSignal(MediaState.LOADING)
   const [duration, setDuration] = createSignal(0)
   const [buffered, setBuffered] = createSignal(0)
@@ -72,10 +72,11 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T, listener
     }
 
     createEffect(() => {
-      duckDotLogWithLabel("player", "state changed to:", stateMapping[mediaState()])
+      duckDotLogWithLabel("state_transition", "player state changed to:", stateMapping[mediaState()])
     })
   }
 
+  let onEndedCallback: AnyNoArgsFunction | undefined = undefined
   let mediaRef!: Ref<T>
   let detailErrorMessage = ""
   const mediaProps: HTMLAttributes<T> = {
@@ -97,7 +98,9 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T, listener
       duckDotLogWithLabel("player", "total duraction updated, duration:", mediaRef.duration, "seconds")
     },
     onEnded() {
-      listener?.onEnded$?.()
+      if (onEndedCallback) {
+        onEndedCallback()
+      }
       setMediaState(MediaState.COMPLETED)
     },
     onError() {
@@ -228,6 +231,9 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T, listener
   })
 
   return {
+    onEnded$(callback: AnyNoArgsFunction) {
+      onEndedCallback = callback
+    },
     /**The current state of the media player. All possible state can be:
      * ```
      * MediaState.LOADING

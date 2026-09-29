@@ -35,8 +35,6 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   )
 }
 
-console.log(routes)
-
 render(
   () => <Router root={App}>{routes}</Router>,
   root,
