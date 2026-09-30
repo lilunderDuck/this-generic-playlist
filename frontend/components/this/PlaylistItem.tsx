@@ -51,6 +51,14 @@ const item__openDirectlyBtn = css`
   margin-bottom: 5px;
 `
 
+const item__playlistName = css`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 48px; /* !!HARDCODED PLAYLIST NAME HEIGHT HERE!! */
+`
+
 export function PlaylistItem(props: IPlaylistItemData) {
   const { setSidebarInfo$ } = usePlaylistContext()
   return (
@@ -69,7 +77,7 @@ export function PlaylistItem(props: IPlaylistItemData) {
           </Tooltip>
         </div>
         <div class={item__nameWrap}>
-          <h3>{props.name}</h3>
+          <h3 class={item__playlistName}>{props.name}</h3>
           <Author info$={props.author} onlyShowOneAuthor$={true} />
         </div>
       </div>

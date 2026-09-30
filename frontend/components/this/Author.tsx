@@ -7,19 +7,18 @@ const item__root = css`
   display: flex; 
   align-items: center;
   gap: 5px;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
 `
 
 const item__authors = css`
   white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 `
 
 const item__moreAuthorCount = css`
   padding-inline: 10px;
   border-radius: 6px;
   background-color: var(--surface0);
-  margin-left: 15px;
   &:hover {
     text-decoration: underline;
   }
@@ -32,8 +31,6 @@ interface IAuthorProps {
 }
 
 export function Author(props: IAuthorProps) {
-  const slicedAuthorList = () => props.info$!.slice(0, 1)
-
   return (
     <Show when={props.info$}>
       <Show when={props.onlyShowOneAuthor$} fallback={
@@ -42,11 +39,7 @@ export function Author(props: IAuthorProps) {
         <div class={`${item__root} ${props.class ?? ""}`}>
           <RenderAuthorNameText {...props.info$![0]} />
           <Show when={props.info$!.length > 1}>
-            <Tooltip label$={(
-              <>
-                And <RenderAuthorList list$={slicedAuthorList()} />
-              </>
-            )}>
+            <Tooltip label$={<RenderAuthorList list$={props.info$!} />}>
               <div class={item__moreAuthorCount}>
                 +{props.info$!.length - 1}
               </div>
@@ -74,7 +67,7 @@ function RenderAuthorList(props: { list$: IAuthorData[] }) {
       {(it, index) => (
         <>
           <RenderAuthorNameText {...it} />
-          <Show when={index() !== props.list$.length - 1}>
+          <Show when={index() !== props.list$.length - 2} fallback={" and "}>
             {", "}
           </Show>
         </>
