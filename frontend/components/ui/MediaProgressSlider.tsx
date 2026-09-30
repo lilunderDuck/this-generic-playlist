@@ -19,13 +19,6 @@ const slider__input = css`
   cursor: pointer;
 `
 
-const slider__buffered = css`
-  width: "var(--slider-buffered-progress)";
-  background-color: "var(--surface0)";
-  z-index: 0;
-  border-radius: 6px;
-`
-
 const slider__tooltip = css`
   position: absolute;
   bottom: 100%; /* Positions it right above the slider */
@@ -129,10 +122,6 @@ export function MediaProgressSlider(props: IMediaProgressSlider) {
           {hoverTime()}
         </div>
       </Show>
-      <div 
-        class={slider__buffered} 
-        style={`--slider-buffered-progress:${props.player$.bufferedProgress$()}%`}
-      />
       <RangeInput
         class={slider__input}
         min={0}

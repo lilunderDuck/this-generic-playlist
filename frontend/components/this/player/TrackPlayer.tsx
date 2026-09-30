@@ -25,6 +25,8 @@ const player__timeSeekingBar = css`
 
 const player__currentTime = css`
   font-size: 15px;
+  width: 4.5rem;
+  text-align: center;
 `
 
 const player__controlsWrap = css`

@@ -49,7 +49,6 @@ export const enum MediaState {
 export function createMediaPlayer<T extends "audio" | "video">(type: T) {
   const [mediaState, setMediaState] = createSignal(MediaState.LOADING)
   const [duration, setDuration] = createSignal(0)
-  const [buffered, setBuffered] = createSignal(0)
   const [currentProgress, setCurrentProgress] = createSignal(0)
   const [currentVolume, setCurentVolume] = createSignal(100)
 
@@ -129,18 +128,6 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
       if (import.meta.env.DEV) {
         if (!shouldUpdateCurrentTime) {
           duckDotLogWithLabel("player", "current time won't be updated")
-        }
-      }
-
-      const duration = mediaRef.duration
-      const buffered = mediaRef.buffered
-      if (duration <= 0) return
-
-      for (let i = 0; i < buffered.length; i++) {
-        if (buffered.start(buffered.length - 1 - i) < currentMediaTime) {
-          const bufferedProgress = (mediaRef.buffered.end(mediaRef.buffered.length - 1 - i) * 100) / duration
-          setBuffered(bufferedProgress)
-          break
         }
       }
     }
@@ -268,8 +255,6 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
     state$: mediaState,
     /**The total length of the current media file in seconds. */
     totalDuration$: duration,
-    /**The buffered (downloaded) **in percentage** of the media file, from `0` to `100`. */
-    bufferedProgress$: buffered,
     /**The current playback timestamp of the media file in seconds. */
     currentProgress$: currentProgress,
     /**Changes the current playback timestamp.
