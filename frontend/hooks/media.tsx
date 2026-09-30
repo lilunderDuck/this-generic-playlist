@@ -178,10 +178,9 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
       return
     }
     
-    duckDotLogWithLabel("player", "media is not ready!!")
-    duckDotLogWithLabel("state transition", "<-- WAIT_MEDIA - because HTML5 Media API has some weird edge cases that is very annoying to deal with")
+    duckDotLogWithLabel("state transition", "wait for 'canplay' event")
     const handleCanPlay = async () => {
-      duckDotLogWithLabel("player", "--> we can play the media now, playing...")
+      duckDotLogWithLabel("player", "we can play the media now, playing...")
       mediaRef.removeEventListener("canplay", handleCanPlay)
       await tryPlayingThis()
     }

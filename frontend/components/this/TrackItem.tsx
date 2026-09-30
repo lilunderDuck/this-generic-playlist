@@ -64,6 +64,7 @@ const item__trackItemIndex = css`
 interface ITrackItemProps extends ITrackData {
   index$: number
   playlistId$: string
+  onClickingThisItem$(): void
 }
 
 export function TrackItem(props: ITrackItemProps) {
@@ -78,7 +79,7 @@ export function TrackItem(props: ITrackItemProps) {
     >
       <div 
         class={`${header__indexWidth} ${item__seperatorDummy} ${item__trackItemIndex}`}
-        onClick={() => playlistState$.playTrack$(props, props.index$)}
+        onClick={props.onClickingThisItem$}
       >
         {props.index$}
       </div>

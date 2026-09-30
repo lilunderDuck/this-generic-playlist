@@ -1,11 +1,11 @@
 import { css } from "molcss"
 import { A, createAsync, useParams } from "@solidjs/router"
-import { createEffect, For, Show } from "solid-js"
+import { For, Show } from "solid-js"
 // ...
-import { CODEC, playlistBannerUrl, playlistCoverIconUrl } from "../../api"
+import { CODEC, playlistBannerUrl, playlistCoverIconUrl, type ITrackData } from "../../api"
 import { LoopingState, usePlaylistContext } from "../../provider"
-import { Author, Button, ButtonSize, ButtonVariant, Tooltip, TrackHeader, TrackItem, TrackPlayer } from "../../components"
-import { formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
+import { Author, Button, ButtonSize, Tooltip, TrackHeader, TrackItem, TrackPlayer } from "../../components"
+import { duckDotLogWithLabel, formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
 import { BsArrowLeft } from "solid-icons/bs"
 
 const playlist__root = css`
@@ -96,11 +96,16 @@ export default function PlaylistTracksPage() {
   const tracksData = playlistTracksData()
   const currentPlaylist = () => playlistItems$().find(it => it.id === param.playlistId!)!
 
-  createEffect(() => {
-    const tracks = tracksData()
-    if (!tracks) return
-    playlistState$.syncData$(currentPlaylist(), tracks)
-  })
+  duckDotLogWithLabel("state transition", "LAZY_RESYNC_PLAYLIST_DATA for: ", currentPlaylist()?.name)
+
+  const whenClickingTrackItem = (someTrack: ITrackData, trackIndex: number) => {
+    // only update the playlist and tracks data when playing some track
+    if (playlistState$.currentPlaylist$()?.id !== currentPlaylist().id) {
+      playlistState$.syncData$(currentPlaylist(), tracksData()!)
+    }
+
+    playlistState$.playTrack$(someTrack, trackIndex)
+  }
 
   return (
     <Show when={tracksData()}>
@@ -134,7 +139,11 @@ export default function PlaylistTracksPage() {
         <section class={css`padding-bottom: 10rem;`} data-is-repeat-once={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}>
           <For each={tracksData()!}>
             {(it, index) => (
-              <TrackItem {...it} index$={index() + 1} playlistId$={param.playlistId!} />
+              <TrackItem 
+                {...it} 
+                index$={index() + 1} playlistId$={param.playlistId!}
+                onClickingThisItem$={() => whenClickingTrackItem(it, index())}
+              />
             )}
           </For>
         </section>
