@@ -1,7 +1,7 @@
 import { For, Show } from "solid-js"
 import { css } from "molcss"
 import type { IAuthorData } from "../../api"
-import { Spacer } from "../ui"
+import { Spacer, Tooltip } from "../ui"
 
 const item__root = css`
   display: flex; 
@@ -19,6 +19,10 @@ const item__moreAuthorCount = css`
   padding-inline: 10px;
   border-radius: 6px;
   background-color: var(--surface0);
+  margin-left: 15px;
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 interface IAuthorProps {
@@ -28,27 +32,25 @@ interface IAuthorProps {
 }
 
 export function Author(props: IAuthorProps) {
+  const slicedAuthorList = () => props.info$!.slice(0, 1)
+
   return (
     <Show when={props.info$}>
       <Show when={props.onlyShowOneAuthor$} fallback={
-        <For each={props.info$}>
-          {(it, index) => (
-            <>
-              <RenderAuthorNameText {...it} />
-              <Show when={index() !== props.info$!.length - 1}>
-                {", "}
-              </Show>
-            </>
-          )}
-        </For>
+        <RenderAuthorList list$={props.info$!} />
       }>
         <div class={`${item__root} ${props.class ?? ""}`}>
           <RenderAuthorNameText {...props.info$![0]} />
           <Show when={props.info$!.length > 1}>
-            <Spacer />
-            <div class={item__moreAuthorCount}>
-              +{props.info$!.length - 1}
-            </div>
+            <Tooltip label$={(
+              <>
+                And <RenderAuthorList list$={slicedAuthorList()} />
+              </>
+            )}>
+              <div class={item__moreAuthorCount}>
+                +{props.info$!.length - 1}
+              </div>
+            </Tooltip>
           </Show>
         </div>
       </Show>
@@ -61,7 +63,22 @@ function RenderAuthorNameText(props: IAuthorData) {
     <Show when={props.url} fallback={
       <p class={item__authors}>{props.name}</p>
     }>
-      <a href={props.url} target="_blank">{props.name}</a>
+      <a class={item__authors} href={props.url} target="_blank">{props.name}</a>
     </Show>
+  )
+}
+
+function RenderAuthorList(props: { list$: IAuthorData[] }) {
+  return (
+    <For each={props.list$}>
+      {(it, index) => (
+        <>
+          <RenderAuthorNameText {...it} />
+          <Show when={index() !== props.list$.length - 1}>
+            {", "}
+          </Show>
+        </>
+      )}
+    </For>
   )
 }

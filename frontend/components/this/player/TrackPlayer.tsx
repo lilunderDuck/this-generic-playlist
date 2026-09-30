@@ -8,6 +8,7 @@ import { MediaState } from "../../../hooks"
 import { formatSecondsToMMSS } from "../../../utils"
 import { playlistCoverIconUrl, playlistTrackUrl } from "../../../api"
 import { Author } from "../Author"
+import { useLocation } from "@solidjs/router"
 
 const player__root = css`
   width: 100%;
@@ -34,7 +35,8 @@ const player__controlsWrap = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-inline: 20px;
+  gap: 5px;
+  padding-inline: 10px;
 `
 
 const player__controls = css`
@@ -86,8 +88,16 @@ const player__buttonRowRightSide = css`
   gap: 15px;
 `
 
+const player__currentlyPlayedTrackName = css`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`
+
 export function TrackPlayer(props: { class?: string }) {
-  const { trackPlayer$, playlistState$ } = usePlaylistContext()
+  const { trackPlayer$, playlistState$, sidebarInfo$ } = usePlaylistContext()
+  const location = useLocation()
 
   const togglePlaying = () => {
     if (trackPlayer$.state$() === MediaState.PLAYING) {
@@ -99,6 +109,7 @@ export function TrackPlayer(props: { class?: string }) {
   }
 
   const shouldDisable = () => playlistState$.currentTrack$() == null || trackPlayer$.state$() == MediaState.LOADING
+  const shouldHideAuthors = () => location.pathname === '/' && sidebarInfo$() !== null
 
   return (
     <section class={`${player__root} ${props.class ?? ''}`}>
@@ -112,8 +123,13 @@ export function TrackPlayer(props: { class?: string }) {
           <Show when={playlistState$.currentTrack$()?.coverIconImage}>
             <div class={`${player__coverIcon} ${playlistState$.currentTrack$()?.coverIconImage ? player__coverIconHasIcon : player__coverIconEmpty}`} style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(playlistState$.currentPlaylist$()!.id, playlistState$.currentTrack$()!.coverIconImage!)}')`} />
             <div>
-              <h3>{playlistState$.currentTrack$()?.name}</h3>
-              <Author info$={playlistState$.currentTrack$()?.author} />
+              <h3 class={player__currentlyPlayedTrackName}>
+                {playlistState$.currentTrack$()?.name}
+              </h3>
+              <Author 
+                info$={playlistState$.currentTrack$()?.author} 
+                onlyShowOneAuthor$={shouldHideAuthors()} 
+              />
             </div>
           </Show>
         </div>
