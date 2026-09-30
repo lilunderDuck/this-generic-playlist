@@ -78,6 +78,11 @@ const playlist__goBackBtnWrapper = css`
   left: 20px;
 `
 
+const playlist__name = css`
+  font-size: 3rem;
+`
+
+
 function playlistTracksData() {
   const param = useParams()
 
@@ -117,7 +122,9 @@ export default function PlaylistTracksPage() {
               style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(param.playlistId!, currentPlaylist().coverIconImage ?? '')}')`}
             />
             <div>
-              <h1>{currentPlaylist().name}</h1>
+              <h1 class={playlist__name}>
+                {currentPlaylist().name}
+              </h1>
               <Author info$={currentPlaylist().author} />
               <div class={playlist__runtimeStat}>
                 {currentPlaylist().totalTrack} total tracks • {formatSecondsToMMSS(currentPlaylist().totalRuntimeInSecond)} in total time
