@@ -14,7 +14,7 @@ function getGitCommitHash() {
   })
 }
 
-export default defineConfig(async() => {
+export default defineConfig(async(options) => {
   const currentCommitHash = await getGitCommitHash()
   const version = `1.0.0-${currentCommitHash}`.replace("\n", "")
   return {
@@ -32,6 +32,8 @@ export default defineConfig(async() => {
     },
     build: {
       target: 'esnext',
+      sourcemap: options.mode === "prod_debug",
+      outDir: "./dist/app"
     },
     esbuild: {
       define: {
