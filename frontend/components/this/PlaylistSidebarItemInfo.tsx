@@ -117,7 +117,7 @@ const sidebar__moreOptionsButtonRow = css`
 export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
   const { setSidebarInfo$, resyncPlaylist$ } = usePlaylistContext()
 
-  const stats = [
+  const getStats = () => [
     { icon$: BiSolidPlaylist, stat$: `Contain ${props.info$.totalTrack} tracks` },
     { icon$: BiSolidTime, stat$: `Total playlist runtime is ${formatSecondsToMMSS(props.info$.totalRuntimeInSecond)}` },
     // { icon$: BsCalendar, stat$: "Playlist created at 10:40 AM, 10/04/2024" },
@@ -170,7 +170,7 @@ export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
         </div>
       </section>
       <section class={sidebar__metadataInfoSection}>
-        <For each={stats}>
+        <For each={getStats()}>
           {it => (
             <div class={sidebar__metadataInfoLine}>
               <it.icon$ size={25} />

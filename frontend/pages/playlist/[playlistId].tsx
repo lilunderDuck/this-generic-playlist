@@ -136,7 +136,10 @@ export default function PlaylistTracksPage() {
           </div>
         </header>
         <TrackHeader />
-        <section class={css`padding-bottom: 10rem;`} data-is-repeat-once={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}>
+        <section 
+          class={css`padding-bottom: 10rem;`} 
+          data-is-repeat-once={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}
+        >
           <For each={tracksData()!}>
             {(it, index) => (
               <TrackItem 
