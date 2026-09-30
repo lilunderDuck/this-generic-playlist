@@ -2,8 +2,21 @@ import { defineConfig } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
 import molcssPlugin from "molcss/vite-plugin"
 import pagesPlugin from 'vite-plugin-pages'
+import child_process from "node:child_process"
 
-export default defineConfig(() => {
+function getGitCommitHash() {
+  const ls = child_process.spawn('git', ["rev-parse", "--short", "HEAD"]);
+
+  return new Promise<string>((resolve, _reject) => {
+    ls.stdout.on('data', (data) => {
+      resolve(data)
+    })
+  })
+}
+
+export default defineConfig(async() => {
+  const currentCommitHash = await getGitCommitHash()
+  const version = `1.0.0-${currentCommitHash}`.replace("\n", "")
   return {
     plugins: [
       solidPlugin(),
@@ -23,7 +36,8 @@ export default defineConfig(() => {
     esbuild: {
       define: {
         APP_NAME: `"toast_playlist"`,
-        APP_USED_STACK: `"solid-js@1.9.5 golang@1.27.0 palette@catpucchin_mocha libquackity@1.0.0"`
+        APP_USED_STACK: `"solid-js@1.9.5 golang@1.27.0 palette@catpucchin_mocha libquackity_catcom@1.0.0"`,
+        APP_VERSION: `"${version}"`
       }
     }
   }
