@@ -70,7 +70,7 @@ export function PlaylistItem(props: IPlaylistItemData) {
         </div>
         <div class={item__nameWrap}>
           <h3>{props.name}</h3>
-          <Author info$={props.author} />
+          <Author info$={props.author} onlyShowOneAuthor$={true} />
         </div>
       </div>
     </Tooltip>

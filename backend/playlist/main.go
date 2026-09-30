@@ -87,7 +87,10 @@ func RegisterFunctions() {
 	core.RegisterFn("track_getAll", func(data *TargetPlaylistParam) ([]TrackData, error) {
 		tracksData, err := utils.ReadJsonFile[[]TrackData](dataFolder + "/playlists/" + data.PlaylistId + "/" + "tracks.json")
 		if err != nil {
-			return emptyTrackData, err
+			if debug.IS_ENABLED {
+				debug.WarnLabelf("playlist", "%v", err)
+			}
+			return emptyTrackData, nil
 		}
 
 		return tracksData, nil

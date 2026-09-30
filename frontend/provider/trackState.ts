@@ -48,7 +48,7 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
     if (import.meta.env.DEV) {
       console.assert(currentPlaylist() !== null, "currentPlaylist is null!!!")
     }
-    duckDotLogWithLabel('playlist', "Current track: ", trackData.name, "by", trackData.author?.name ?? "<unset>", "with duration of", trackData.totalDuration)
+    duckDotLogWithLabel('playlist', "Current track: ", trackData.name, "by", trackData.author ?? "<unset>", "with duration of", trackData.totalDuration)
     setCurrentTrackIndex(trackIndex)
     setCurrentTrack(trackData)
     player.changeSource$(playlistTrackUrl(currentPlaylist()!.id, trackData.audioFile))

@@ -3,11 +3,11 @@ package playlist
 import "time"
 
 type PlaylistItemSchema struct {
-	Name           string             `json:"name"                    validate:"required"`
-	Author         PlaylistAuthorInfo `json:"author,omitempty"`
-	CoverIconImage string             `json:"coverIconImage"`
-	BannerImages   []string           `json:"bannerImages,omitempty"`
-	Description    string             `json:"description,omitempty"`
+	Name           string               `json:"name"                    validate:"required"`
+	Author         []PlaylistAuthorInfo `json:"author,omitempty"`
+	CoverIconImage string               `json:"coverIconImage"`
+	BannerImages   []string             `json:"bannerImages,omitempty"`
+	Description    string               `json:"description,omitempty"`
 }
 
 type PlaylistItemData struct {
@@ -43,10 +43,10 @@ type TargetPlaylistParam struct {
 }
 
 type TrackData struct {
-	Name           string             `json:"name"`
-	Id             int                `json:"id"`
-	Author         PlaylistAuthorInfo `json:"author,omitempty"`
-	CoverIconImage string             `json:"coverIconImage"`
-	TotalDuration  float64            `json:"totalDuration"`
-	AudioFile      string             `json:"audioFile"`
+	Name           string               `json:"name"`
+	Id             int                  `json:"id"`
+	Author         []PlaylistAuthorInfo `json:"author,omitempty"`
+	CoverIconImage string               `json:"coverIconImage"`
+	TotalDuration  float64              `json:"totalDuration"`
+	AudioFile      string               `json:"audioFile"`
 }

@@ -7,7 +7,7 @@ export interface IAuthorData {
 
 export interface IPlaylistItemSchema {
   name: string
-  author?: IAuthorData
+  author?: IAuthorData[]
   coverIconImage?: string
   bannerImages?: string[]
   description?: string
@@ -23,7 +23,7 @@ export interface IPlaylistItemData extends IPlaylistItemSchema {
 export interface ITrackData {
   id: string
   name: string
-  author?: IAuthorData
+  author?: IAuthorData[]
   coverIconImage?: string
   totalDuration: number
   audioFile: string
