@@ -96,7 +96,7 @@ export function TrackPlayer(props: { class?: string }) {
     trackPlayer$.play$()
   }
 
-  const shouldDisable = () => playlistState$.currentTrack$() == null
+  const shouldDisable = () => playlistState$.currentTrack$() == null || trackPlayer$.state$() == MediaState.LOADING
 
   return (
     <section class={`${player__root} ${props.class ?? ''}`}>
