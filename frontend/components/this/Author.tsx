@@ -28,16 +28,23 @@ interface IAuthorProps {
 }
 
 export function Author(props: IAuthorProps) {
-  
+
 
   return (
     <Show when={props.info$}>
-      <div class={`${item__root} ${props.class ?? ""}`}>
-        <Show when={props.onlyShowOneAuthor$} fallback={
-          <For each={props.info$}>
-            {it => <RenderAuthorNameText {...it} />}
-          </For>
-        }>
+      <Show when={props.onlyShowOneAuthor$} fallback={
+        <For each={props.info$}>
+          {(it, index) => (
+            <>
+              <RenderAuthorNameText {...it} />
+              <Show when={index() !== props.info$!.length - 1}>
+                {", "}
+              </Show>
+            </>
+          )}
+        </For>
+      }>
+        <div class={`${item__root} ${props.class ?? ""}`}>
           <RenderAuthorNameText {...props.info$![0]} />
           <Show when={props.info$!.length > 1}>
             <Spacer />
@@ -45,8 +52,8 @@ export function Author(props: IAuthorProps) {
               +{props.info$!.length - 1}
             </div>
           </Show>
-        </Show>
-      </div>
+        </div>
+      </Show>
     </Show>
   )
 }
