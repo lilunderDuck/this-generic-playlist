@@ -67,8 +67,10 @@ function RenderAuthorList(props: { list$: IAuthorData[] }) {
       {(it, index) => (
         <>
           <RenderAuthorNameText {...it} />
-          <Show when={index() !== props.list$.length - 2} fallback={" and "}>
-            {", "}
+          <Show when={index() !== props.list$.length - 1}>
+            <Show when={index() === props.list$.length - 2} fallback={", "}>
+              {" and "}
+            </Show>
           </Show>
         </>
       )}
