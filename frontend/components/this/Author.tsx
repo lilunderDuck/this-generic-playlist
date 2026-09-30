@@ -28,8 +28,6 @@ interface IAuthorProps {
 }
 
 export function Author(props: IAuthorProps) {
-
-
   return (
     <Show when={props.info$}>
       <Show when={props.onlyShowOneAuthor$} fallback={

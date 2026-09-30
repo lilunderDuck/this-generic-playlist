@@ -119,6 +119,7 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
       setMediaState(MediaState.ERROR)
     },
     onTimeUpdate() {
+      if (!document.hasFocus()) return // don't update
       const currentMediaTime = mediaRef.currentTime
 
       if (shouldUpdateCurrentTime) {
@@ -168,12 +169,11 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
 
     const isEnded = currentProgress() === duration()
     if (isEnded) {
-      duckDotLogWithLabel("player", "detected that the media has finished playing, resetting current progress back to", 0)
       setCurrentProgress(0)
+      mediaRef.currentTime = 0
     }
-    mediaRef.currentTime = currentProgress()
 
-    if (mediaRef.readyState >= 3) {
+    if (mediaRef.readyState >= 3 /* HAVE_FUTURE_DATA */) {
       tryPlayingThis()
       return
     }
@@ -215,6 +215,8 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
   }
 
   const changeCurrentTime = (time: number, update = true) => {
+    if (!document.hasFocus()) return // don't update
+
     if (time < 0) {
       if (import.meta.env.DEV) {
         duckDotLogWithLabel("player", "provided a negative time", time, "seconds, falling back to", 0, "second.")

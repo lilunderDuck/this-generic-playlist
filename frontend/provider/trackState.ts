@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js"
 import { playlistTrackUrl, type IPlaylistItemData, type ITrackData } from "../api"
 import type { MediaPlayer } from "../hooks"
-import { duckDotLog, duckDotLogWithLabel } from "../utils"
+import { duckDotLogWithLabel } from "../utils"
 
 export const enum LoopingState {
   REPEAT_ONCE = 0,
@@ -25,7 +25,7 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
     }
 
     if (loopingState() === LoopingState.REPEAT_ONCE) {
-      playTrack(lastTrack, currentTrackIndex())
+      player.play$()
       return
     }
 
