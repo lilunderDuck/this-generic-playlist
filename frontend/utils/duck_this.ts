@@ -3,7 +3,7 @@ const predefinedLabels = {
   timing: "#25cbbe",
   early: "#dd6e29",
   player: "#dd2977",
-  state_transition: "#ff36d3",
+  "state transition": "#ff36d3",
   playlist: "#bd7aff"
 }
 

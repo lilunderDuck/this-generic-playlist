@@ -64,15 +64,15 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
 
   if (import.meta.env.DEV) {
     const stateMapping: Record<MediaState, string> = {
-      [MediaState.COMPLETED]: 'MediaState.COMPLETED',
-      [MediaState.PLAYING]: 'MediaState.PLAYING',
-      [MediaState.PAUSED]: 'MediaState.PAUSED',
-      [MediaState.ERROR]: 'MediaState.ERROR',
-      [MediaState.LOADING]: 'MediaState.LOADING',
+      [MediaState.COMPLETED]: 'STATE_COMPLETED',
+      [MediaState.PLAYING]: 'STATE_PLAYING',
+      [MediaState.PAUSED]: 'STATE_PAUSED',
+      [MediaState.ERROR]: 'STATE_ERROR',
+      [MediaState.LOADING]: 'STATE_LOADING',
     }
 
     createEffect(() => {
-      duckDotLogWithLabel("state_transition", "player state changed to:", stateMapping[mediaState()])
+      duckDotLogWithLabel("state transition", "player state changed to:", stateMapping[mediaState()])
     })
   }
 
@@ -95,7 +95,9 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
       }
 
       setDuration(mediaRef.duration)
-      duckDotLogWithLabel("player", "total duraction updated, duration:", mediaRef.duration, "seconds")
+      if (import.meta.env.DEV) {
+        duckDotLogWithLabel("player", "total duraction updated, duration:", mediaRef.duration, "seconds")
+      }
     },
     onEnded() {
       if (onEndedCallback) {
@@ -104,11 +106,15 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
       setMediaState(MediaState.COMPLETED)
     },
     onError() {
-      console.assert(mediaRef !== undefined, "NullPointerException: accessing mediaRef too early!!")
+      if (import.meta.env.DEV) {
+        console.assert(mediaRef !== undefined, "NullPointerException: accessing mediaRef too early!!")
+      }
       duckDotLogWithLabel("player", `ERROR DURING MOD, I mean... ${type}... LOADING\n`, "networkState:", mediaRef.networkState)
 
       detailErrorMessage = ERROR_MESSAGE_MAPPING[mediaRef.networkState as MediaNetworkState]
-      console.assert(detailErrorMessage !== undefined, "could not get the detail error message for networkState", mediaRef.networkState, ", case is not being handled or invalid.")
+      if (import.meta.env.DEV) {
+        console.assert(detailErrorMessage !== undefined, "could not get the detail error message for networkState", mediaRef.networkState, ", case is not being handled or invalid.")
+      }
 
       setMediaState(MediaState.ERROR)
     },
@@ -117,8 +123,12 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
 
       if (shouldUpdateCurrentTime) {
         setCurrentProgress(currentMediaTime)
-      } else {
-        duckDotLogWithLabel("player", "current time won't be updated")
+      }
+
+      if (import.meta.env.DEV) {
+        if (!shouldUpdateCurrentTime) {
+          duckDotLogWithLabel("player", "current time won't be updated")
+        }
       }
 
       const duration = mediaRef.duration
@@ -150,7 +160,7 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
     mediaRef.src = src
     setCurrentProgress(0)
 
-    duckDotLogWithLabel("player", "source changed:", src)
+    duckDotLogWithLabel("player", "source changed to:", src)
   }
 
   const play = () => {
@@ -158,7 +168,7 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
 
     const isEnded = currentProgress() === duration()
     if (isEnded) {
-      duckDotLogWithLabel("player", "detected that the media has finished playing, resetting current progress back to 0")
+      duckDotLogWithLabel("player", "detected that the media has finished playing, resetting current progress back to", 0)
       setCurrentProgress(0)
     }
     mediaRef.currentTime = currentProgress()
@@ -167,10 +177,11 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
       tryPlayingThis()
       return
     }
-  
-    duckDotLogWithLabel("player", "media not ready!! waiting for 'canplay' event...")
+    
+    duckDotLogWithLabel("player", "media is not ready!!")
+    duckDotLogWithLabel("state transition", "<-- WAIT_MEDIA - because HTML5 Media API has some weird edge cases that is very annoying to deal with")
     const handleCanPlay = async () => {
-      duckDotLogWithLabel("player", "GOT 'canplay' signal, attempting to play now")
+      duckDotLogWithLabel("player", "--> we can play the media now, playing...")
       mediaRef.removeEventListener("canplay", handleCanPlay)
       await tryPlayingThis()
     }
@@ -184,7 +195,7 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
       duckDotLogWithLabel("player", "playing", mediaRef.src)
     } catch (error: any) {
       if (error.name === "AbortError") {
-        duckDotLogWithLabel("player", "play request safely aborted by a newer load request.")
+        duckDotLogWithLabel("player", "safely aborted by a newer load request")
         return
       }
 
@@ -193,8 +204,10 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
   }
 
   const changeVolume = (volume: number) => {
-    console.assert(!isNaN(volume), "volume is not a number")
-    console.assert(volume >= 0 && volume <= 100, "volume must not be negative and must not over 100. Your current volume is:", volume)
+    if (import.meta.env.DEV) {
+      console.assert(!isNaN(volume), "volume is not a number")
+      console.assert(volume >= 0 && volume <= 100, "volume must not be negative and must not over 100. Your current volume is:", volume)
+    }
 
     mediaRef.volume = volume / 100
     setCurentVolume(volume)
@@ -204,7 +217,9 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
 
   const changeCurrentTime = (time: number, update = true) => {
     if (time < 0) {
-      duckDotLogWithLabel("player", "provided a negative time", time, "seconds, falling back to", 0, "second.")
+      if (import.meta.env.DEV) {
+        duckDotLogWithLabel("player", "provided a negative time", time, "seconds, falling back to", 0, "second.")
+      }
       time = 0
     }
 
@@ -212,7 +227,9 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
     shouldUpdateCurrentTime = update
     if (update) {
       mediaRef.currentTime = time
-      duckDotLogWithLabel("player", "current time changed to", time, "seconds")
+      if (import.meta.env.DEV) {
+        duckDotLogWithLabel("player", "current time changed to", time, "seconds")
+      }
     }
   }
 
@@ -221,11 +238,15 @@ export function createMediaPlayer<T extends "audio" | "video">(type: T) {
   const toggleMute = () => {
     setCurentVolume(isMuted() ? 100 : 0)
     mediaRef.muted = isMuted()
-    duckDotLogWithLabel("player", "muted:", isMuted())
+    if (import.meta.env.DEV) {
+      duckDotLogWithLabel("player", "muted:", isMuted())
+    }
   }
 
   onCleanup(() => {
-    duckDotLogWithLabel("player", "cleaning up...")
+    if (import.meta.env.DEV) {
+      duckDotLogWithLabel("player", "cleaning up...")
+    }
     // @ts-ignore
     mediaRef = null
   })

@@ -57,9 +57,9 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
 
   return {
     syncData$(currentPlaylist: IPlaylistItemData, currentTracks: ITrackData[]) {
+      duckDotLogWithLabel("state transition", "PLAYLIST_RESYNC for:", currentPlaylist.name)
       setCurrentPlaylist(currentPlaylist)
       setCurrentTrackList(currentTracks)
-      duckDotLogWithLabel("playlist", "synced all required data for", currentPlaylist.name)
     },
     currentPlaylist$: currentPlaylist,
     currentTrackList$: currentTrackList,

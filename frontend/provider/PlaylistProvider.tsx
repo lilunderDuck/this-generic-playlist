@@ -1,7 +1,7 @@
 import { createContext, createSignal, onMount, useContext, type Accessor, type ParentProps, type Setter } from "solid-js"
 import { CODEC, type IPlaylistItemData } from "../api"
 import { usePersistedSignal } from "../hooks/usePersistedSignal"
-import { duckDotLog } from "../utils"
+import { duckDotLog, duckDotLogWithLabel } from "../utils"
 import { createMediaPlayer, type MediaPlayer } from "../hooks"
 import { createPlayerlistState, type PlayerlistState } from "./trackState"
 
@@ -27,7 +27,7 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
     const items = await CODEC.playlist_getAll$()
     setPlaylistItems(items)
     if (sidebarInfo()) {
-      duckDotLog("resyncing sidebar info...")
+      duckDotLogWithLabel("state transition", "RESYNC_SIDEBAR_INFO for:", sidebarInfo()?.name)
       const newSidebarInfo = items.find(it => it.id === sidebarInfo()!.id)!
       console.assert(newSidebarInfo !== undefined, `${sidebarInfo()?.id} does not exist!!`)
       setSidebarInfo(newSidebarInfo)
