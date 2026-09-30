@@ -38,6 +38,7 @@ const item__coverIcon = css`
   width: 3rem;
   height: 3rem;
   border-radius: 6px;
+  flex-shrink: 0;
 `
 
 const item__coverIconHasIcon = css`
