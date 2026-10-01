@@ -1,7 +1,8 @@
 import { createContext, createSignal, onMount, useContext, type Accessor, type ParentProps, type Setter } from "solid-js"
+// ...
 import { CODEC, type IPlaylistItemData } from "../api"
 import { usePersistedSignal } from "../hooks/usePersistedSignal"
-import { duckDotLog, duckDotLogWithLabel } from "../utils"
+import { duckDotLogWithLabel } from "../utils"
 import { createMediaPlayer, type MediaPlayer } from "../hooks"
 import { createPlayerlistState, type PlayerlistState } from "./trackState"
 
@@ -59,7 +60,7 @@ export function PlaylistProvider(props: ParentProps<IPlaylistProviderProps>) {
       playlistItems$: playlistItems,
       trackPlayer$: trackPlayer,
       playlistState$: trackState,
-      resyncPlaylist$: resyncPlaylist
+      resyncPlaylist$: resyncPlaylist,
     }}>
       <trackPlayer.Player$ />
       {props.children}

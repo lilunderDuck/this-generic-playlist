@@ -108,15 +108,24 @@ export function TrackPlayer(props: { class?: string }) {
     trackPlayer$.play$()
   }
 
-  const shouldDisable = () => playlistState$.currentTrack$() == null || trackPlayer$.state$() == MediaState.LOADING
+  const shouldDisable = () => (
+    playlistState$.currentTrack$() == null || 
+    trackPlayer$.state$() == MediaState.LOADING || 
+    playlistState$.currentTrackList$().length < 2
+  )
+
   const shouldHideAuthors = () => location.pathname === '/' && sidebarInfo$() !== null
 
   return (
     <section class={`${player__root} ${props.class ?? ''}`}>
       <div class={player__timeSeekingBar}>
-        <div class={player__currentTime}>{formatSecondsToMMSS(trackPlayer$.currentProgress$())}</div>
+        <div class={player__currentTime}>
+          {formatSecondsToMMSS(trackPlayer$.currentProgress$())}
+        </div>
         <MediaProgressSlider player$={trackPlayer$} disabled={shouldDisable()} />
-        <div class={player__currentTime}>{formatSecondsToMMSS(trackPlayer$.totalDuration$())}</div>
+        <div class={player__currentTime}>
+          {formatSecondsToMMSS(trackPlayer$.totalDuration$())}
+        </div>
       </div>
       <div class={player__controlsWrap}>
         <div class={player__currentTrackInfo}>
@@ -138,7 +147,8 @@ export function TrackPlayer(props: { class?: string }) {
             <Button 
               variant$={ButtonVariant.NO_BACKGROUND} 
               size$={ButtonSize.ICON_LARGE} 
-              disabled={shouldDisable()}
+              disabled={shouldDisable() || playlistState$.currentTrackIndex$() == 0}
+              onClick={playlistState$.goToPrevTrack$}
             >
               <BsCaretLeftFill size={25} />
             </Button>
@@ -158,7 +168,8 @@ export function TrackPlayer(props: { class?: string }) {
             <Button 
               variant$={ButtonVariant.NO_BACKGROUND} 
               size$={ButtonSize.ICON_LARGE} 
-              disabled={shouldDisable()}
+              disabled={shouldDisable() || playlistState$.currentTrackIndex$() == playlistState$.currentTrackList$().length - 1}
+              onClick={playlistState$.goToNextTrack$}
             >
               <BsCaretRightFill size={25} />
             </Button>

@@ -29,7 +29,7 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
       return
     }
 
-    const lastTrackIndex = currentTrackList().findIndex(it => it.id === lastTrack.id)
+    const lastTrackIndex = getIndexForTrack(lastTrack)
     const nextTrack = currentTrackList()[lastTrackIndex + 1]
     if (!nextTrack) {
       if (loopingState() === LoopingState.REPEAT_PLAYLIST) {
@@ -43,6 +43,10 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
 
     playTrack(nextTrack, lastTrackIndex + 1)
   }
+
+  const getIndexForTrack = (track: ITrackData) => (
+    currentTrackList().findIndex(it => it.id === track.id)
+  )
 
   const playTrack = (trackData: ITrackData, trackIndex: number) => {
     if (import.meta.env.DEV) {
@@ -61,6 +65,21 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
       setCurrentPlaylist(playlist)
       setCurrentTrackList(currentTracks)
     },
+    goToNextTrack$() {
+      if (!currentTrack()) return
+      duckDotLogWithLabel("state transition", "NEXT_TRACK")
+      const nextTrackIndex = getIndexForTrack(currentTrack()!) + 1
+      const nextTrack = currentTrackList()[nextTrackIndex]
+      playTrack(nextTrack, nextTrackIndex)
+    },
+    goToPrevTrack$() {
+      if (!currentTrack()) return
+      duckDotLogWithLabel("state transition", "PREV_TRACK")
+      const lastTrackIndex = getIndexForTrack(currentTrack()!) - 1
+      const lastTrack = currentTrackList()[lastTrackIndex]
+      playTrack(lastTrack, lastTrackIndex)
+    },
+    currentTrackIndex$: currentTrackIndex,
     currentPlaylist$: currentPlaylist,
     currentTrackList$: currentTrackList,
     loopingState$: loopingState,
