@@ -10,14 +10,20 @@ import (
 )
 
 func CreateServer(port string) *http.Server {
-	debug.InfoLabelf("server", "starting a server at port %s", port)
+	if debug.IS_ENABLED {
+		debug.InfoLabelf("server", "starting server at port %s", port)
+	}
+
 	return &http.Server{
 		Addr: port,
 	}
 }
 
 func StartServer(server *http.Server) {
-	debug.InfoLabelf("server", "local server started at %s", server.Addr)
+	if debug.IS_ENABLED {
+		debug.InfoLabelf("server", "local server started at %s", server.Addr)
+	}
+
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		if debug.IS_ENABLED {
 			debug.WarnLabelf("server", "%v", err)

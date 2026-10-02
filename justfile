@@ -8,3 +8,11 @@ build_debug_frontend_preview:
 
 [parallel]
 preview_debug: build_debug_frontend_preview dev_server
+
+build:
+  bun run build
+  go build -o dist/this_generic_playlist.exe main.go
+
+build_debug:
+  bun run build
+  go build -o dist/this_generic_playlist_debug.exe -tags=TOAST_DEBUG main.go

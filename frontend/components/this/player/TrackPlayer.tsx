@@ -1,14 +1,15 @@
 import { css } from "molcss"
 import { BsCaretLeftFill, BsCaretRightFill, BsPauseFill, BsPlayFill } from "solid-icons/bs"
+import { useLocation } from "@solidjs/router"
+import { Show } from "solid-js"
+// ...
 import { usePlaylistContext } from "../../../provider"
 import { Button, ButtonSize, ButtonVariant, MediaProgressSlider, Spacer, Tooltip } from "../../ui"
 import { TrackLoopButton } from "./TrackLoopButton"
-import { Show } from "solid-js"
 import { MediaState } from "../../../hooks"
 import { formatSecondsToMMSS } from "../../../utils"
-import { playlistCoverIconUrl, playlistTrackUrl } from "../../../api"
+import { playlistCoverIconUrl } from "../../../api"
 import { Author } from "../Author"
-import { useLocation } from "@solidjs/router"
 
 const player__root = css`
   width: 100%;

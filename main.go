@@ -1,23 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"embed"
 	"toast/backend/core"
 	"toast/backend/playlist"
 )
 
+//go:embed dist/app/index.html dist/app/assets/*
+var appAssets embed.FS
+
 func main() {
 	server := core.CreateServer(":8000")
-	core.RegisterFnAction("hello_world", func() error {
-		fmt.Println("hello world")
-		return nil
-	})
-
 	playlist.RegisterFunctions()
 
-	assetsServer := core.NewAssetsServer("toast-playlist")
-	assetsServer.MustOpen()
+	app := core.NewApp("toast-playlist")
+	app.Init(appAssets, "dist/app", "http://localhost:8000")
 
 	core.StartServer(server)
-	assetsServer.Close()
 }
