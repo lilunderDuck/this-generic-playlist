@@ -13,6 +13,7 @@ const item__authors = css`
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  display: inline;
 `
 
 const item__moreAuthorCount = css`
