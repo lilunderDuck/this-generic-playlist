@@ -10,7 +10,7 @@ import (
 )
 
 func RegisterFunctions() {
-	dataFolder := filepath.Join(core.GetCurrentExecDir(), "data/toast-playlist")
+	dataFolder := filepath.Join(core.GetCurrentExecDir(), "data/playlist")
 	playlistsDb := db.New(dataFolder + "/playlists.db")
 	// tracksDb := db.New(dataFolder + "/tracks.db")
 	core.RegisterFnProducer("playlist_getAll", func() ([]PlaylistItemData, error) {
@@ -34,7 +34,7 @@ func RegisterFunctions() {
 	})
 
 	core.RegisterFn("playlist_resync", func(param *TargetPlaylistParam) (*ResyncedPlaylistData, error) {
-		basePath := dataFolder + "/playlists/" + param.PlaylistId
+		basePath := dataFolder + "/list/" + param.PlaylistId
 		tracksData, err := utils.ReadJsonFile[[]TrackData](basePath + "/tracks.json")
 		if err != nil {
 			return nil, err
@@ -85,7 +85,7 @@ func RegisterFunctions() {
 
 	emptyTrackData := []TrackData{}
 	core.RegisterFn("track_getAll", func(data *TargetPlaylistParam) ([]TrackData, error) {
-		tracksData, err := utils.ReadJsonFile[[]TrackData](dataFolder + "/playlists/" + data.PlaylistId + "/" + "tracks.json")
+		tracksData, err := utils.ReadJsonFile[[]TrackData](dataFolder + "/list/" + data.PlaylistId + "/" + "tracks.json")
 		if err != nil {
 			if debug.IS_ENABLED {
 				debug.WarnLabelf("playlist", "%v", err)

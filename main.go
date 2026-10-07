@@ -13,7 +13,7 @@ func main() {
 	server := core.CreateServer(":8000")
 	playlist.RegisterFunctions()
 
-	app := core.NewApp("toast-playlist")
+	app := core.NewApp("playlist")
 	app.Init(appAssets, "dist/app", "http://localhost:8000")
 
 	core.StartServer(server)
