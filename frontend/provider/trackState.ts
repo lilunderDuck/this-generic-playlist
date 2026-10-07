@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js"
-import { playlistTrackUrl, type IPlaylistItemData, type ITrackData } from "../api"
-import type { MediaPlayer } from "../hooks"
+import { playlistCoverIconUrl, playlistTrackUrl, type IPlaylistItemData, type ITrackData } from "../api"
+import { type MediaPlayer, createSMTCHandlers } from "../hooks"
 import { duckDotLogWithLabel } from "../utils"
 
 export const enum LoopingState {
@@ -15,6 +15,16 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
   const [currentTrack, setCurrentTrack] = createSignal<ITrackData | null>(null)
   const [currentTrackIndex, setCurrentTrackIndex] = createSignal(0)
   const [loopingState, setLoopingState] = createSignal<LoopingState>(LoopingState.NO_REPEAT)
+
+  const smtc = createSMTCHandlers({
+    nextTrackHandler$() {
+      goToNextTrack()
+    },
+    previousTrackHandler$() {
+      goToPrevTrack()
+    },
+    player$: player
+  })
 
   player.onEnded$(() => tryPlayingNextTrack())
 
@@ -57,6 +67,23 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
     setCurrentTrack(trackData)
     player.changeSource$(playlistTrackUrl(currentPlaylist()!.id, trackData.audioFile))
     player.play$()
+    smtc.changeMetadata$(currentPlaylist()!, trackData)
+  }
+
+  const goToNextTrack = () => {
+    if (!currentTrack()) return
+    duckDotLogWithLabel("state transition", "NEXT_TRACK")
+    const nextTrackIndex = getIndexForTrack(currentTrack()!) + 1
+    const nextTrack = currentTrackList()[nextTrackIndex]
+    playTrack(nextTrack, nextTrackIndex)
+  }
+
+  const goToPrevTrack = () => {
+    if (!currentTrack()) return
+    duckDotLogWithLabel("state transition", "PREV_TRACK")
+    const lastTrackIndex = getIndexForTrack(currentTrack()!) - 1
+    const lastTrack = currentTrackList()[lastTrackIndex]
+    playTrack(lastTrack, lastTrackIndex)
   }
 
   return {
@@ -65,20 +92,8 @@ export function createPlayerlistState(player: MediaPlayer<"audio">) {
       setCurrentPlaylist(playlist)
       setCurrentTrackList(currentTracks)
     },
-    goToNextTrack$() {
-      if (!currentTrack()) return
-      duckDotLogWithLabel("state transition", "NEXT_TRACK")
-      const nextTrackIndex = getIndexForTrack(currentTrack()!) + 1
-      const nextTrack = currentTrackList()[nextTrackIndex]
-      playTrack(nextTrack, nextTrackIndex)
-    },
-    goToPrevTrack$() {
-      if (!currentTrack()) return
-      duckDotLogWithLabel("state transition", "PREV_TRACK")
-      const lastTrackIndex = getIndexForTrack(currentTrack()!) - 1
-      const lastTrack = currentTrackList()[lastTrackIndex]
-      playTrack(lastTrack, lastTrackIndex)
-    },
+    goToNextTrack$: goToNextTrack,
+    goToPrevTrack$: goToPrevTrack,
     currentTrackIndex$: currentTrackIndex,
     currentPlaylist$: currentPlaylist,
     currentTrackList$: currentTrackList,
