@@ -56,7 +56,7 @@ function RenderAuthorWithLimit(props: { info$: IAuthorData[], limit$: number }) 
       <Show when={props.info$!.length > props.limit$}>
         <Tooltip label$={<RenderAuthorList list$={props.info$!} />}>
           <div class={item__moreAuthorCount}>
-            +{props.info$!.length - 1}
+            +{props.info$!.length - props.limit$}
           </div>
         </Tooltip>
       </Show>

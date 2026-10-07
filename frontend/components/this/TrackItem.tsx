@@ -62,6 +62,12 @@ const item__trackItemIndex = css`
   font-size: 20px;
 `
 
+const item__authorNames = css`
+  & > [data-corvu-tooltip-anchor] {
+    display: inline-block;
+  }
+`
+
 interface ITrackItemProps extends ITrackData {
   index$: number
   playlistId$: string
@@ -91,7 +97,7 @@ export function TrackItem(props: ITrackItemProps) {
         />
         <p>{props.name}</p>
       </div>
-      <div class={`${header__authorWidth} ${item__seperatorDummy}`}>
+      <div class={`${header__authorWidth} ${item__seperatorDummy} ${item__authorNames}`}>
         <Author info$={props.author} />
       </div>
       <div class={`${header__durationWidth}`}>
