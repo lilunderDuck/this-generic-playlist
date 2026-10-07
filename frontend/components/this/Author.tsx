@@ -20,6 +20,7 @@ const item__moreAuthorCount = css`
   padding-inline: 10px;
   border-radius: 6px;
   background-color: var(--surface0);
+  width: fit-content;
   &:hover {
     text-decoration: underline;
   }
@@ -29,26 +30,37 @@ interface IAuthorProps {
   class?: string
   info$?: IAuthorData[]
   onlyShowOneAuthor$?: boolean
+  limit$?: number
 }
 
 export function Author(props: IAuthorProps) {
   return (
     <Show when={props.info$}>
       <Show when={props.onlyShowOneAuthor$} fallback={
-        <RenderAuthorList list$={props.info$!} />
+        <RenderAuthorWithLimit info$={props.info$!} limit$={5} />
       }>
         <div class={`${item__root} ${props.class ?? ""}`}>
-          <RenderAuthorNameText {...props.info$![0]} />
-          <Show when={props.info$!.length > 1}>
-            <Tooltip label$={<RenderAuthorList list$={props.info$!} />}>
-              <div class={item__moreAuthorCount}>
-                +{props.info$!.length - 1}
-              </div>
-            </Tooltip>
-          </Show>
+          <RenderAuthorWithLimit info$={props.info$!} limit$={1} />
         </div>
       </Show>
     </Show>
+  )
+}
+
+function RenderAuthorWithLimit(props: { info$: IAuthorData[], limit$: number }) {
+  const authorListCut = () => props.info$.slice(0, props.limit$)
+
+  return (
+    <>
+      <RenderAuthorList list$={authorListCut()} omitAndSeperator$={props.info$.length < props.limit$} />
+      <Show when={props.info$!.length > props.limit$}>
+        <Tooltip label$={<RenderAuthorList list$={props.info$!} />}>
+          <div class={item__moreAuthorCount}>
+            +{props.info$!.length - 1}
+          </div>
+        </Tooltip>
+      </Show>
+    </>
   )
 }
 
@@ -62,14 +74,14 @@ function RenderAuthorNameText(props: IAuthorData) {
   )
 }
 
-function RenderAuthorList(props: { list$: IAuthorData[] }) {
+function RenderAuthorList(props: { list$: IAuthorData[], omitAndSeperator$?: boolean }) {
   return (
     <For each={props.list$}>
       {(it, index) => (
         <>
           <RenderAuthorNameText {...it} />
           <Show when={index() !== props.list$.length - 1}>
-            <Show when={index() === props.list$.length - 2} fallback={", "}>
+            <Show when={index() === props.list$.length - 2 && props.omitAndSeperator$} fallback={", "}>
               {" and "}
             </Show>
           </Show>
