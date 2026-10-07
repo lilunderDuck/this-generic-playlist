@@ -5,6 +5,7 @@ import { For, onCleanup, Show } from 'solid-js'
 import { root } from '..'
 import { Button, ButtonSize, ButtonVariant, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip, TrackPlayer } from '../components'
 import { usePlaylistContext } from '../provider'
+import { scrollbar, scrollbar__invs, scrollbar__vertical } from '../utils'
 
 const home__root = css`
   width: 100%;
@@ -29,11 +30,14 @@ const home__rootElement = css`
 
 const home__content = css`
   background-color: var(--mantle);
-  padding-inline: 10px;
-  padding-block: 5px;
-  height: calc(100% - 65px - 10px);
-  margin: 10px;
+  padding-top: 10px;
+  padding-left: 15px;
+  padding-right: 5px;
+  padding-bottom: 10rem;
+  margin-left: 10px;
+  height: calc(100% - 65px);
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   border-radius: 6px;
 `
@@ -56,7 +60,7 @@ export default function Home() {
           <PlaylistSearchBar />
           <div />
         </header>
-        <div class={home__content}>
+        <div class={`${home__content} ${scrollbar} ${scrollbar__vertical}`}>
           <For each={playlistItems$()}>
             {it => (
               <PlaylistItem {...it} />

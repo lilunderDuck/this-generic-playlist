@@ -1,7 +1,7 @@
 import { For, Show } from "solid-js"
 import { css } from "molcss"
 import type { IAuthorData } from "../../api"
-import { Spacer, Tooltip } from "../ui"
+import { Tooltip } from "../ui"
 
 const item__root = css`
   display: flex; 
