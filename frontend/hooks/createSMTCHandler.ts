@@ -71,7 +71,7 @@ export function createSMTCHandlers(options: {
 
       cachedMetadata.album = currentPlaylist.name
       cachedMetadata.title = currentTrack.name
-      cachedMetadata.artist = currentPlaylist.author?.map(it => it.name).join(", ") ?? ""
+      cachedMetadata.artist = currentTrack.author?.map(it => it.name).join(", ") ?? ""
 
       if (currentTrack.coverIconImage) {
         cachedArtworkMetadata[0].src = playlistCoverIconUrl(currentPlaylist.id, currentTrack.coverIconImage)

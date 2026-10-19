@@ -69,7 +69,7 @@ export default function Home() {
         </div>
 
         <Show when={playlistState$.currentTrack$()}>
-          <TrackPlayer class={css`position: absolute; width: calc(100% - 20px); left: 10px; bottom: 10px; border-radius: 6px;`} />
+          <TrackPlayer class={css`position: absolute; width: calc(100% - 10px); left: 10px; bottom: 10px; border-radius: 6px;`} />
         </Show>
       </main>
       <Show when={sidebarInfo$()}>

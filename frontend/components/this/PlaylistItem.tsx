@@ -62,25 +62,23 @@ const item__playlistName = css`
 export function PlaylistItem(props: IPlaylistItemData) {
   const { setSidebarInfo$ } = usePlaylistContext()
   return (
-    <Tooltip label$="Click to show playlist info" placement$="bottom">
-      <div class={item__root} id="item_root" onClick={() => setSidebarInfo$(props)}>
-        <div 
-          class={`${item__coverIcon} ${props.coverIconImage ? item__coverIconHasIcon : item__coverIconEmpty}`}
-          style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage!)}')`}
-        >
-          <Tooltip label$="Play this one">
-            <A href={`/playlist/${props.id}`}>
-              <Button size$={ButtonSize.ICON} class={item__openDirectlyBtn} id="item__openDirectlyBtn">
-                <BsPlayFill size={27} />
-              </Button>
-            </A>
-          </Tooltip>
-        </div>
-        <div class={item__nameWrap}>
-          <h3 class={item__playlistName}>{props.name}</h3>
-          <Author info$={props.author} onlyShowOneAuthor$={true} />
-        </div>
+    <div class={item__root} id="item_root" onClick={() => setSidebarInfo$(props)}>
+      <div 
+        class={`${item__coverIcon} ${props.coverIconImage ? item__coverIconHasIcon : item__coverIconEmpty}`}
+        style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.id, props.coverIconImage!)}')`}
+      >
+        <Tooltip label$="Play this one">
+          <A href={`/playlist/${props.id}`}>
+            <Button size$={ButtonSize.ICON} class={item__openDirectlyBtn} id="item__openDirectlyBtn">
+              <BsPlayFill size={27} />
+            </Button>
+          </A>
+        </Tooltip>
       </div>
-    </Tooltip>
+      <div class={item__nameWrap}>
+        <h3 class={item__playlistName}>{props.name}</h3>
+        <Author info$={props.author} onlyShowOneAuthor$={true} />
+      </div>
+    </div>
   )
 }

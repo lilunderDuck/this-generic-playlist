@@ -17,6 +17,7 @@ const item__authors = css`
 `
 
 const item__moreAuthorCount = css`
+  margin-left: 10px;
   padding-inline: 10px;
   border-radius: 6px;
   background-color: var(--surface0);
@@ -52,7 +53,7 @@ function RenderAuthorWithLimit(props: { info$: IAuthorData[], limit$: number }) 
 
   return (
     <>
-      <RenderAuthorList list$={authorListCut()} omitAndSeperator$={props.info$.length < props.limit$} />
+      <RenderAuthorList list$={authorListCut()} omitAndSeperator$={props.info$.length > props.limit$} />
       <Show when={props.info$!.length > props.limit$}>
         <Tooltip label$={<RenderAuthorList list$={props.info$!} />}>
           <div class={item__moreAuthorCount}>
@@ -81,7 +82,7 @@ function RenderAuthorList(props: { list$: IAuthorData[], omitAndSeperator$?: boo
         <>
           <RenderAuthorNameText {...it} />
           <Show when={index() !== props.list$.length - 1}>
-            <Show when={index() === props.list$.length - 2 && props.omitAndSeperator$} fallback={", "}>
+            <Show when={index() === props.list$.length - 2 && !props.omitAndSeperator$} fallback={", "}>
               {" and "}
             </Show>
           </Show>
