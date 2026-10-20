@@ -11,8 +11,6 @@ const header__root = css`
   background-color: var(--mantle);
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-  position: sticky;
-  top: 0;
 `
 
 export const header__indexWidth = css`
