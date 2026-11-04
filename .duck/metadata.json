@@ -1,0 +1,9 @@
+{
+  "title": "This generic playlist",
+  "id": "toast-playlist",
+  "description": "A totally normal playlist player for my own customization with no twist whatsoever.",
+  "type": "public",
+  "status": "paused",
+  "icon": "toast.jpg",
+  "repoUrl": "https://github.com/lilunderDuck/this-generic-playlist"
+}
