@@ -1,11 +1,11 @@
 import { css } from 'molcss'
 import { BsPlus } from 'solid-icons/bs'
-import { For, onCleanup, Show } from 'solid-js'
+import { For, lazy, onCleanup, Show } from 'solid-js'
 // ...
 import { root } from '..'
-import { Button, ButtonSize, ButtonVariant, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip, TrackPlayer } from '../components'
+import { Button, ButtonSize, ButtonVariant, Dialog, PlaylistItem, PlaylistSearchBar, PlaylistSidebarItemInfo, Tooltip, TrackPlayer } from '../components'
 import { usePlaylistContext } from '../provider'
-import { scrollbar, scrollbar__invs, scrollbar__vertical } from '../utils'
+import { scrollbar, scrollbar__vertical } from '../utils'
 
 const home__root = css`
   width: 100%;
@@ -48,18 +48,23 @@ export default function Home() {
   root.className = home__rootElement
   onCleanup(() => root.className = "")
 
+  const CreatePlaylistDialog = lazy(() => import("../components/dialogs/create-playlist/CreatePlaylistDialog"))
+
   return (
     <>
       <main class={home__root}>
         <header class={home__header}>
-          <Tooltip label$="Create a playlist">
-            <Button variant$={ButtonVariant.NO_BACKGROUND} size$={ButtonSize.ICON_LARGE}>
-              <BsPlus size={30} />
-            </Button> 
-          </Tooltip>
+          <Dialog dialogContent$={CreatePlaylistDialog}>
+            <Tooltip label$="Create a playlist">
+              <Button variant$={ButtonVariant.NO_BACKGROUND} size$={ButtonSize.ICON_LARGE}>
+                <BsPlus size={30} />
+              </Button> 
+            </Tooltip>
+          </Dialog>
           <PlaylistSearchBar />
           <div />
         </header>
+        
         <div class={`${home__content} ${scrollbar} ${scrollbar__vertical}`}>
           <For each={playlistItems$()}>
             {it => (
