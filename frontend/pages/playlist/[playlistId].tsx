@@ -91,6 +91,12 @@ const playlist__name = css`
   font-size: 3rem;
 `
 
+const playlist__trackItemList = css`
+  padding-bottom: 10rem;
+  &[data-is-repeat-once=true] [data-is-current-track=true] {
+    outline: 4px solid var(--yellow);
+  }
+`
 
 function playlistTracksData() {
   const param = useParams()
@@ -105,7 +111,7 @@ function playlistTracksData() {
 
 export default function PlaylistTracksPage() {
   const param = useParams()
-  const { playlistItems$, playlistState$, trackPlayer$ } = usePlaylistContext()
+  const { playlistItems$, playlistState$ } = usePlaylistContext()
 
   const tracksData = playlistTracksData()
   const currentPlaylist = () => playlistItems$().find(it => it.id === param.playlistId!)!
@@ -159,7 +165,7 @@ export default function PlaylistTracksPage() {
         </header>
         <TrackHeader />
         <section 
-          class={`${css`padding-bottom: 10rem;`} trackItemList`} 
+          class={playlist__trackItemList} 
           data-is-repeat-once={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}
         >
           <For each={tracksData()!}>

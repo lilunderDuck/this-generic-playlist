@@ -8,19 +8,22 @@ import { playlistCoverIconUrl, type ITrackData } from "../../api"
 import { header__authorWidth, header__durationWidth, header__indexWidth, header__nameWidth } from "./TrackHeader"
 import { Author } from "./Author"
 import { formatSecondsToMMSS } from "../../utils"
-import { usePlaylistContext } from "../../provider"
+import { LoopingState, usePlaylistContext } from "../../provider"
 import { MediaState } from "../../hooks"
 
 const item__root = css`
-  width: 100%;
+  width: calc(100% - 2 * 10px);
   display: flex;
   align-items: center;
   gap: 15px;
   user-select: none;
-  padding-inline: 20px;
+  padding-inline: 10px;
+  margin-inline: 10px;
   padding-block: 5px;
   border-radius: 6px;
   color: var(--subtext0);
+  position: relative;
+  margin-bottom: 5px;
 `
 
 const item__notCurrentTrack = css`
@@ -99,7 +102,6 @@ const item__playingAnimation = css`
     height: 20px; /* calc(40 * var(--size)) */
     border-radius: 6px;
     background: currentColor;
-    color: var(--sky);
   }
   
   animation: playingAnimation 0.4s 0.5s linear infinite alternate;
@@ -125,6 +127,30 @@ const item__playingAnimationPaused = css`
   }
 `
 
+const item__playingAnimationDefaultColor = css`
+  &, &::before, &::after {
+    color: var(--sky);
+  }
+`
+
+const item__playingAnimationOnRepeatColor = css`
+  &, &::before, &::after {
+    color: var(--yellow);
+  }
+`
+
+const item__currentlyRepeatingThisTrackIndicator = css`
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background-color: var(--yellow);
+  color: var(--crust);
+  padding-inline: 10px;
+  padding-block: 5px;
+  border-radius: 6px;
+  font-weight: bold;
+`
+
 interface ITrackItemProps extends ITrackData {
   index$: number
   playlistId$: string
@@ -135,14 +161,19 @@ export function TrackItem(props: ITrackItemProps) {
   const { playlistState$, trackPlayer$ } = usePlaylistContext()
 
   const isCurrentTrack = () => playlistState$.currentTrack$()?.id === props.id
-  
   const isCurrentTrackPaused = () => trackPlayer$.state$() === MediaState.PAUSED && isCurrentTrack()
+  const isLoopingCurrentTrack = () => isCurrentTrack() && playlistState$.loopingState$() === LoopingState.REPEAT_ONCE
 
   return (
     <div 
       class={`${item__root} ${isCurrentTrack() ? item__currentTrack : item__notCurrentTrack}`}
       data-is-current-track={isCurrentTrack()}
-    >
+    > 
+      <Show when={isLoopingCurrentTrack()}>
+        <div class={`${item__currentlyRepeatingThisTrackIndicator} trackItem__repeatIndicator`}>
+          {"<<"} Currently looping this track
+        </div>
+      </Show>
       <div 
         class={`${header__indexWidth} ${item__seperatorDummy} ${item__trackItemIndex}`}
         onClick={props.onClickingThisItem$}
@@ -153,7 +184,7 @@ export function TrackItem(props: ITrackItemProps) {
         <Show when={isCurrentTrack()} fallback={
           <BsPlayFill size={35} class="trackItem__playIcon" />
         }>
-          <span class={`${item__playingAnimation} ${isCurrentTrackPaused() ? item__playingAnimationPaused : ''}`}></span>
+          <span class={`${item__playingAnimation} ${isCurrentTrackPaused() ? item__playingAnimationPaused : ''} ${isLoopingCurrentTrack() ? item__playingAnimationOnRepeatColor : item__playingAnimationDefaultColor}`} />
         </Show>
       </div>
       <div class={`${header__nameWidth} ${item__trackNameWrap}`}>
