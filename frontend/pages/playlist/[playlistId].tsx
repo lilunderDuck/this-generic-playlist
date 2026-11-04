@@ -1,12 +1,12 @@
 import { css } from "molcss"
 import { A, createAsync, useParams } from "@solidjs/router"
 import { For, Show } from "solid-js"
+import { BsArrowLeft } from "solid-icons/bs"
 // ...
 import { CODEC, playlistBannerUrl, playlistCoverIconUrl, type ITrackData } from "../../api"
 import { LoopingState, usePlaylistContext } from "../../provider"
 import { Author, Button, ButtonSize, Tooltip, TrackHeader, TrackItem, TrackPlayer } from "../../components"
 import { duckDotLogWithLabel, formatSecondsToMMSS, scrollbar, scrollbar__invs, scrollbar__vertical } from "../../utils"
-import { BsArrowLeft } from "solid-icons/bs"
 
 const playlist__root = css`
   width: 100%;
@@ -105,7 +105,7 @@ function playlistTracksData() {
 
 export default function PlaylistTracksPage() {
   const param = useParams()
-  const { playlistItems$, playlistState$ } = usePlaylistContext()
+  const { playlistItems$, playlistState$, trackPlayer$ } = usePlaylistContext()
 
   const tracksData = playlistTracksData()
   const currentPlaylist = () => playlistItems$().find(it => it.id === param.playlistId!)!
@@ -121,6 +121,8 @@ export default function PlaylistTracksPage() {
     playlistState$.playTrack$(someTrack, trackIndex)
   }
 
+  const bannerImageUrl = () => playlistBannerUrl(currentPlaylist().id, currentPlaylist().bannerImages?.[0]!)
+
   return (
     <Show when={tracksData()}>
       <div class={playlist__goBackBtnWrapper} id="playlist__goBackBtn">
@@ -134,7 +136,10 @@ export default function PlaylistTracksPage() {
         </Tooltip>
       </div>
       <main class={`${playlist__root} ${scrollbar} ${scrollbar__vertical} ${scrollbar__invs}`}>
-        <header class={playlist__header} style={`--playlist-banner-url:url('${playlistBannerUrl(currentPlaylist().id, currentPlaylist().bannerImages?.[0]!)}')`}>
+        <header 
+          class={playlist__header} 
+          style={`--playlist-banner-url:url('${bannerImageUrl()}')`}
+        >
           <div class={playlist__info}>
             <div 
               class={`${playlist__coverIcon} ${currentPlaylist().coverIconImage ? playlist__coverIconHasIcon : playlist__coverIconEmpty}`}
@@ -154,7 +159,7 @@ export default function PlaylistTracksPage() {
         </header>
         <TrackHeader />
         <section 
-          class={css`padding-bottom: 10rem;`} 
+          class={`${css`padding-bottom: 10rem;`} trackItemList`} 
           data-is-repeat-once={playlistState$.loopingState$() === LoopingState.REPEAT_ONCE}
         >
           <For each={tracksData()!}>

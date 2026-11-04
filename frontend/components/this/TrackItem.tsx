@@ -1,9 +1,15 @@
+import { BsPauseFill, BsPlayFill } from "solid-icons/bs"
+import { Show } from "solid-js"
+// ...
 import { css } from "molcss"
+import "./TrackItem.css"
+// ...
 import { playlistCoverIconUrl, type ITrackData } from "../../api"
 import { header__authorWidth, header__durationWidth, header__indexWidth, header__nameWidth } from "./TrackHeader"
 import { Author } from "./Author"
 import { formatSecondsToMMSS } from "../../utils"
 import { usePlaylistContext } from "../../provider"
+import { MediaState } from "../../hooks"
 
 const item__root = css`
   width: 100%;
@@ -22,11 +28,26 @@ const item__notCurrentTrack = css`
     background-color: var(--base);
     color: var(--text);
   }
+
+  & .trackItem__playIcon {
+    display: none;
+  }
+
+  &[data-is-current-track=false]:hover .trackItem__playIcon {
+    display: block;
+  }
+
+  &[data-is-current-track=false]:hover .trackItem__indexNumber {
+    display: none;
+  }
 `
 
 const item__currentTrack = css`
   background-color: var(--surface0);
   color: var(--text);
+  &[data-is-current-track=true] .trackItem__indexNumber {
+    display: none;
+  }
 `
 
 const item__seperatorDummy = css`
@@ -58,13 +79,49 @@ const item__trackNameWrap = css`
 `
 
 const item__trackItemIndex = css`
-  text-align: center;
   font-size: 20px;
+  display: flex;
+  justify-content: center;
 `
 
 const item__authorNames = css`
   & > [data-corvu-tooltip-anchor] {
     display: inline-block;
+  }
+`
+
+const item__playingAnimation = css`
+  /* --size: 0.5px; */
+  display: block;
+  position: relative;
+  &, &::before, &::after {
+    width: 4px; /* calc(8 * var(--size)) */
+    height: 20px; /* calc(40 * var(--size)) */
+    border-radius: 6px;
+    background: currentColor;
+    color: var(--sky);
+  }
+  
+  animation: playingAnimation 0.4s 0.5s linear infinite alternate;
+  margin: 10px auto; /* calc(20 * var(--size)) */
+  &::after, &::before {
+    content: '';
+    left: 10px; /* calc(20 * var(--size)) */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: playingAnimation 0.4s 0.65s linear infinite alternate;
+  }
+
+  &::before {
+    left: -10px; /* calc(-20 * var(--size)) */
+    animation-delay: 0s;
+  }
+`
+
+const item__playingAnimationPaused = css`
+  &, &::before, &::after {
+    animation-play-state: paused;
   }
 `
 
@@ -75,9 +132,11 @@ interface ITrackItemProps extends ITrackData {
 }
 
 export function TrackItem(props: ITrackItemProps) {
-  const { playlistState$ } = usePlaylistContext()
+  const { playlistState$, trackPlayer$ } = usePlaylistContext()
 
   const isCurrentTrack = () => playlistState$.currentTrack$()?.id === props.id
+  
+  const isCurrentTrackPaused = () => trackPlayer$.state$() === MediaState.PAUSED && isCurrentTrack()
 
   return (
     <div 
@@ -88,7 +147,14 @@ export function TrackItem(props: ITrackItemProps) {
         class={`${header__indexWidth} ${item__seperatorDummy} ${item__trackItemIndex}`}
         onClick={props.onClickingThisItem$}
       >
-        {props.index$}
+        <span class="trackItem__indexNumber">
+          {props.index$}
+        </span>
+        <Show when={isCurrentTrack()} fallback={
+          <BsPlayFill size={35} class="trackItem__playIcon" />
+        }>
+          <span class={`${item__playingAnimation} ${isCurrentTrackPaused() ? item__playingAnimationPaused : ''}`}></span>
+        </Show>
       </div>
       <div class={`${header__nameWidth} ${item__trackNameWrap}`}>
         <div 
