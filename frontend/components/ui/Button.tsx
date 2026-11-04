@@ -85,8 +85,8 @@ const sizeMapping: Record<ButtonSize, string> = {
   [ButtonSize.LARGE]: css`
     padding-left: 1rem;
     padding-right: 1rem;
+    padding-block: 0.6rem;
     border-radius: 0.375rem;
-    height: 2.75rem;
   `,
   [ButtonSize.ICON]: css`
     padding-inline: 0.375rem;

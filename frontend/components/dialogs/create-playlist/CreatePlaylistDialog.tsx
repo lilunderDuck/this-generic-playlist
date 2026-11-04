@@ -1,12 +1,12 @@
 import { css } from "molcss"
-import { Input, type IDialogContentProps } from "../../ui"
+import { Button, ButtonSize, ButtonVariant, Input, type IDialogContentProps } from "../../ui"
 import { scrollbar, scrollbar__vertical } from "../../../utils"
 import CreatePlaylistDialogSection from "./CreatePlaylistDialogSection"
 import { BsPlus } from "solid-icons/bs"
 
 const dialog__root = css`
-  padding-inline: 10px;
-  padding-block: 5px;
+  padding-inline: 20px;
+  padding-block: 12px;
   background-color: var(--crust);
   width: 45rem;
   height: 80vh;
@@ -14,12 +14,16 @@ const dialog__root = css`
   font-size: 1.2rem;
   & label {
     display: block;
+  }
+
+  & label, & [data-label] {
     font-weight: bold;
     margin-bottom: 5px;
   }
 `
 
-const dialog__basicInfoSection = css`
+const dialog__heading = css`
+  margin-bottom: 10px;
 `
 
 const dialog__inputPart = css`
@@ -36,14 +40,10 @@ const dialog__textarea = css`
   padding-block: 5px;
 `
 
-const dialog__iconInputSection = css`
-  margin-bottom: 15px;
-`
-
 const dialog__iconInputContainer = css`
   display: flex;
   width: 100%;
-  gap: 10px;
+  gap: 15px;
   padding-inline: 10px;
 `
 
@@ -74,11 +74,21 @@ const dialog__bannerInput = css`
   flex-shrink: 0;
 `
 
+const dialog__buttonRow = css`
+  padding-inline: 20px;
+  padding-right: 15px;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+`
+
 export default function CreatePlaylistDialog(props: IDialogContentProps) {
   return (
     <div class={`${dialog__root} ${scrollbar} ${scrollbar__vertical}`}>
-      <h1>Create playlist</h1>
-      <CreatePlaylistDialogSection name$="Cover icon and banner" class={dialog__iconInputSection}>
+      <h1 class={dialog__heading}>Create playlist</h1>
+      <CreatePlaylistDialogSection name$="Cover icon and banner">
         <div class={dialog__iconInputContainer}>
           <div>
             <label>Playlist icon</label>
@@ -94,22 +104,35 @@ export default function CreatePlaylistDialog(props: IDialogContentProps) {
           </div>
         </div>
       </CreatePlaylistDialogSection>
-      <CreatePlaylistDialogSection name$="Basic info" class={dialog__basicInfoSection}>
+      <CreatePlaylistDialogSection name$="Basic info">
         <div class={dialog__inputPart}>
-          <label>Name</label>
-          <Input placeholder="Playlist name" />
+          <div data-label>Name</div>
+          <Input autocomplete="off" id="name" placeholder="Playlist name" />
         </div>
 
         <div class={dialog__inputPart}>
-          <label>Author</label>
-          <Input placeholder="Playlist author(s)" />
+          <div data-label>Author</div>
+          <Input autocomplete="off" id="author" placeholder="Playlist author(s)" />
         </div>
 
         <div class={dialog__inputPart}>
-          <label>Description</label>
-          <textarea placeholder="Playlist author(s)" class={dialog__textarea} />
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            rows={8}
+            placeholder="A brief description of this playlist..." 
+            class={dialog__textarea} 
+          />
         </div>
       </CreatePlaylistDialogSection>
+      <div class={dialog__buttonRow}>
+        <Button size$={ButtonSize.LARGE} variant$={ButtonVariant.DANGER} onClick={props.close$}>
+          Discard
+        </Button>
+        <Button size$={ButtonSize.LARGE} variant$={ButtonVariant.SECONDARY}>
+          Create
+        </Button>
+      </div>
     </div>
   )
 }
