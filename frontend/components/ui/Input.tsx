@@ -11,6 +11,6 @@ const input__root = css`
 
 export function Input(props: HTMLAttributes<"input">) {
   return (
-    <input class={`${input__root} ${props.class ?? ""}`} {...props} />
+    <input {...props} class={`${input__root} ${props.class ?? ""}`} />
   )
 }

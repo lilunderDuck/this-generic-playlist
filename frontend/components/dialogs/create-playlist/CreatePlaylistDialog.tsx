@@ -3,6 +3,7 @@ import { Button, ButtonSize, ButtonVariant, Input, type IDialogContentProps } fr
 import { scrollbar, scrollbar__vertical } from "../../../utils"
 import CreatePlaylistDialogSection from "./CreatePlaylistDialogSection"
 import { BsPlus } from "solid-icons/bs"
+import { PlaylistAuthorInput } from "./PlaylistAuthorInput"
 
 const dialog__root = css`
   padding-inline: 20px;
@@ -112,7 +113,7 @@ export default function CreatePlaylistDialog(props: IDialogContentProps) {
 
         <div class={dialog__inputPart}>
           <div data-label>Author</div>
-          <Input autocomplete="off" id="author" placeholder="Playlist author(s)" />
+          <PlaylistAuthorInput />
         </div>
 
         <div class={dialog__inputPart}>
