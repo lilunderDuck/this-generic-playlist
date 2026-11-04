@@ -149,3 +149,7 @@ code {
   background-color: var(--surface0);
   font-size: 15px;
 }
+
+.freeze_animations *, .freeze_animations *::before, .freeze_animations *::after {
+  animation-play-state: paused !important;
+}

@@ -9,6 +9,14 @@ export default function App(props: ParentProps) {
     duckDotLogWithLabel('debug', "heartbeat is disabled on dev mode")
   }
 
+  window.addEventListener('focus', () => {
+    document.body.classList.remove("freeze_animations")
+  })
+  
+  window.addEventListener('blur', () => {
+    document.body.classList.add("freeze_animations")
+  })
+
   return (
     <PlaylistProvider>
       {props.children}
