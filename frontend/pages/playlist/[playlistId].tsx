@@ -73,9 +73,18 @@ const playlist__runtimeStat = css`
 `
 
 const playlist__goBackBtnWrapper = css`
-  position: absolute;
-  top: 3px;
+  position: fixed;
+  top: 10px;
   left: 20px;
+  z-index: 10;
+  & button {
+    gap: 10px;
+    opacity: 0.7;
+  }
+
+  & button:hover {
+    opacity: 1;
+  }
 `
 
 const playlist__name = css`
@@ -114,6 +123,16 @@ export default function PlaylistTracksPage() {
 
   return (
     <Show when={tracksData()}>
+      <div class={playlist__goBackBtnWrapper} id="playlist__goBackBtn">
+        <Tooltip label$="Go back to home">
+          <A href="/">
+            <Button size$={ButtonSize.LARGE}>
+              <BsArrowLeft size={20} />
+              Go back
+            </Button>
+          </A>
+        </Tooltip>
+      </div>
       <main class={`${playlist__root} ${scrollbar} ${scrollbar__vertical} ${scrollbar__invs}`}>
         <header class={playlist__header} style={`--playlist-banner-url:url('${playlistBannerUrl(currentPlaylist().id, currentPlaylist().bannerImages?.[0]!)}')`}>
           <div class={playlist__info}>
@@ -132,15 +151,6 @@ export default function PlaylistTracksPage() {
             </div>
           </div>
           <div class={playlist__headerShadow} />
-          <div class={playlist__goBackBtnWrapper} id="playlist__goBackBtn">
-            <Tooltip label$="Go back to home">
-              <A href="/">
-                <Button size$={ButtonSize.ICON_LARGE}>
-                  <BsArrowLeft size={20} />
-                </Button>
-              </A>
-            </Tooltip>
-          </div>
         </header>
         <TrackHeader />
         <section 

@@ -83,8 +83,8 @@ const sizeMapping: Record<ButtonSize, string> = {
   // [ButtonSize.SMALL]: css`
   // `,
   [ButtonSize.LARGE]: css`
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     border-radius: 0.375rem;
     height: 2.75rem;
   `,
