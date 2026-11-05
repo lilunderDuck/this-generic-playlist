@@ -1,6 +1,6 @@
 import { css } from "molcss"
 import { BsPlus, BsX } from "solid-icons/bs"
-import { createSignal, For, Show } from "solid-js"
+import { createEffect, createSignal, For, Show } from "solid-js"
 // ...
 import { Button, ButtonVariant } from "../../ui"
 import type { IAuthorData } from "../../../api"
@@ -89,7 +89,7 @@ interface IPlaylistAuthorInputProps {
 const ERR_INVALID_AUTHOR_URL = "The link you're provided is not a valid URL"
 const ERR_INVALID_AUTHOR_NAME = "The author name should not be left empty."
 
-export function PlaylistAuthorInput() {
+export function PlaylistAuthorInput(props: IPlaylistAuthorInputProps) {
   const [authorData, setAuthorData] = createSignal<IAuthorData[]>([])
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
 
@@ -180,6 +180,10 @@ export function PlaylistAuthorInput() {
     })])
   }
 
+  createEffect(() => {
+    props.onChange$(authorData())
+  })
+
   return (
     <div class={input__root}>
       <Show when={authorData().length === 0} fallback={
@@ -191,7 +195,7 @@ export function PlaylistAuthorInput() {
               </div>
               <div class={input__linkItem}>
                 <Show when={it.url} fallback={
-                  <span class={input__noAuthorLinkText}>None</span>
+                  <span class={input__noAuthorLinkText}>[No author url]</span>
                 }>
                   <a href={it.url}>{it.url}</a>
                 </Show>

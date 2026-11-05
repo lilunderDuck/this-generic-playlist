@@ -113,7 +113,7 @@ export default function CreatePlaylistDialog(props: IDialogContentProps) {
 
         <div class={dialog__inputPart}>
           <div data-label>Author</div>
-          <PlaylistAuthorInput />
+          <PlaylistAuthorInput onChange$={console.log} />
         </div>
 
         <div class={dialog__inputPart}>
