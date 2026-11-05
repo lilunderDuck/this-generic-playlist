@@ -3,17 +3,17 @@ package playlist
 import (
 	"errors"
 	"path/filepath"
-	"toast/backend/core"
+	"toast/backend/core/front2back"
 	"toast/backend/db"
 	"toast/backend/debug"
 	"toast/backend/utils"
 )
 
 func RegisterFunctions() {
-	dataFolder := filepath.Join(core.GetCurrentExecDir(), "data/playlist")
+	dataFolder := filepath.Join(utils.GetCurrentExecDir(), "data/playlist")
 	playlistsDb := db.New(dataFolder + "/playlists.db")
 	// tracksDb := db.New(dataFolder + "/tracks.db")
-	core.RegisterFnProducer("playlist_getAll", func() ([]PlaylistItemData, error) {
+	front2back.RegisterFnProducer("playlist_getAll", func() ([]PlaylistItemData, error) {
 		rawValue := playlistsDb.ValuesAsStringFast()
 		data, err := utils.ParseJsonString[[]PlaylistItemData](rawValue)
 		if err != nil {
@@ -22,7 +22,7 @@ func RegisterFunctions() {
 		return data, nil
 	})
 
-	core.RegisterFn("playlist_create", func(data *PlaylistItemSchema) (*PlaylistItemData, error) {
+	front2back.RegisterFn("playlist_create", func(data *PlaylistItemSchema) (*PlaylistItemData, error) {
 		newData := NewPlaylistItemData(data)
 		rawData := []byte(utils.StringifyJson(newData))
 		err := playlistsDb.Put(newData.Id, rawData)
@@ -33,7 +33,7 @@ func RegisterFunctions() {
 		return newData, nil
 	})
 
-	core.RegisterFn("playlist_resync", func(param *TargetPlaylistParam) (*ResyncedPlaylistData, error) {
+	front2back.RegisterFn("playlist_resync", func(param *TargetPlaylistParam) (*ResyncedPlaylistData, error) {
 		basePath := dataFolder + "/list/" + param.PlaylistId
 		tracksData, err := utils.ReadJsonFile[[]TrackData](basePath + "/tracks.json")
 		if err != nil {
@@ -84,7 +84,7 @@ func RegisterFunctions() {
 	})
 
 	emptyTrackData := []TrackData{}
-	core.RegisterFn("track_getAll", func(data *TargetPlaylistParam) ([]TrackData, error) {
+	front2back.RegisterFn("track_getAll", func(data *TargetPlaylistParam) ([]TrackData, error) {
 		tracksData, err := utils.ReadJsonFile[[]TrackData](dataFolder + "/list/" + data.PlaylistId + "/" + "tracks.json")
 		if err != nil {
 			if debug.IS_ENABLED {

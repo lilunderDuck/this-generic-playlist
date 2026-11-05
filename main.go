@@ -6,15 +6,16 @@ import (
 	"toast/backend/playlist"
 )
 
+//go:generate goversioninfo -icon=./this/toast.ico -manifest=./this/app.manifest -skip-versioninfo=true
+
 //go:embed dist/app/index.html dist/app/assets/*
 var appAssets embed.FS
 
 func main() {
-	server := core.CreateServer(":8000")
-	playlist.RegisterFunctions()
-
 	app := core.NewApp("playlist")
 	app.Init(appAssets, "dist/app", "http://localhost:8000")
 
-	core.StartServer(server)
+	playlist.RegisterFunctions()
+
+	app.Start(":8000")
 }

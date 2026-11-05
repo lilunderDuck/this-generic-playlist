@@ -1,6 +1,14 @@
-dev_server:
-  go build -o dist/main.exe -tags=TOAST_DEBUG,TOAST_DEV_MODE main.go
-  dist/main.exe
+EXECUTABLE_NAME:="this_generic_playlist"
+
+install_goversioninfo:
+  go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest
+
+gen_required_exe_stuff:
+  go generate
+
+dev_server: gen_required_exe_stuff
+  go build -o dist/{{EXECUTABLE_NAME}}_dev.exe -tags=TOAST_DEBUG,TOAST_DEV_MODE main.go
+  dist/{{EXECUTABLE_NAME}}_dev.exe
 
 build_debug_frontend_preview:
   bunx vite build --mode prod_debug
@@ -9,10 +17,10 @@ build_debug_frontend_preview:
 [parallel]
 preview_debug: build_debug_frontend_preview dev_server
 
-build:
+build: gen_required_exe_stuff
   bun run build
-  go build -ldflags="-H=windowsgui" -o dist/this_generic_playlist.exe main.go
+  go build -ldflags="-H=windowsgui" -o dist/{{EXECUTABLE_NAME}}.exe main.go
 
-build_debug:
+build_debug: gen_required_exe_stuff
   bun run build
-  go build -o dist/this_generic_playlist_debug.exe -tags=TOAST_DEBUG main.go
+  go build -o dist/{{EXECUTABLE_NAME}}.exe -tags=TOAST_DEBUG main.go
