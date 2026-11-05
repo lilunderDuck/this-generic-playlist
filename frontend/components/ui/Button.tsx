@@ -26,6 +26,9 @@ const base = css`
   border-radius: 0.375rem;
   line-height: 1.25rem;
   outline: none;
+  &:disabled {
+    opacity: 0.6;
+  }
 `
 
 const variantMapping: Record<ButtonVariant, string> = {
