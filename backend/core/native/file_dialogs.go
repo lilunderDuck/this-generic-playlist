@@ -8,8 +8,8 @@ import (
 )
 
 type OpenFileDialogParam struct {
-	Title  string                `json:"title"`
-	Filter []OpenFileDialogParam `json:"filter"`
+	Title  string                    `json:"title"`
+	Filter []OpenDialogFilterOptions `json:"filter,omitempty"`
 }
 
 type OpenDialogFilterOptions struct {
@@ -17,14 +17,24 @@ type OpenDialogFilterOptions struct {
 	Patterns []string `json:"patterns"`
 }
 
+type OpenFileDialogResult struct {
+	FilePath string `json:"filePath"`
+}
+
 func RegisterNativeDialogPickerCalls(windowHandle uintptr) {
-	front2back.RegisterFn("openFileDialog", func(data *OpenFileDialogParam) (string, error) {
+	front2back.RegisterFn("openFileDialog", func(data *OpenFileDialogParam) (*OpenFileDialogResult, error) {
+		fileFilters := zenity.FileFilters{}
+		for i := 0; i < len(data.Filter); i++ {
+			value := data.Filter[i]
+			fileFilters = append(fileFilters, zenity.FileFilter{
+				Name:     value.Name,
+				Patterns: value.Patterns,
+			})
+		}
+
 		filePath, err := zenity.SelectFile(
 			zenity.Title(data.Title),
-			zenity.FileFilters{
-				{Name: "Text Files", Patterns: []string{"*.txt", "*.md"}},
-				{Name: "Images", Patterns: []string{"*.jpg", "*.png", "*.gif"}},
-			},
+			fileFilters,
 			zenity.Attach(windowHandle),
 		)
 
@@ -34,12 +44,12 @@ func RegisterNativeDialogPickerCalls(windowHandle uintptr) {
 					debug.WarnLabel("native", "user cancel the file dialog")
 				}
 
-				return "", nil
+				return nil, nil
 			}
 
-			return "", err
+			return nil, err
 		}
 
-		return filePath, nil
+		return &OpenFileDialogResult{FilePath: filePath}, nil
 	})
 }

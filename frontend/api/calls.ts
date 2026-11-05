@@ -29,6 +29,14 @@ export interface ITrackData {
   audioFile: string
 }
 
+export type OpenFileDialogParam = {
+  title: string
+  filter: {
+    name: string
+    patterns: string[]
+  }[]
+}
+
 /**This contains all function to call to backend */
 export const CODEC = {
   playlist_getAll$: registerProducer<IPlaylistItemData[]>("playlist_getAll"),
@@ -41,6 +49,6 @@ export const CODEC = {
   }>('playlist_resync'),
   track_getAll$: registerPlain<{
     playlistId: string
-  }, ITrackData[]>('track_getAll')
-  // playlist_create$: registerFn<IPlaylistItemSchema, IPlaylistItemData>('playlist_create', 'no-in-no-out')
+  }, ITrackData[]>('track_getAll'),
+  openFileDialog$: registerPlain<OpenFileDialogParam, { filePath: string }>('openFileDialog')
 }

@@ -4,6 +4,7 @@ import { scrollbar, scrollbar__vertical } from "../../../utils"
 import CreatePlaylistDialogSection from "./CreatePlaylistDialogSection"
 import { BsPlus } from "solid-icons/bs"
 import { PlaylistAuthorInput } from "./PlaylistAuthorInput"
+import { createDialogPicker, createImageDialogPicker } from "../../../hooks"
 
 const dialog__root = css`
   padding-inline: 20px;
@@ -48,18 +49,6 @@ const dialog__iconInputContainer = css`
   padding-inline: 10px;
 `
 
-const dialog__imageInput = css`
-  background-color: var(--base);
-  border-radius: 6px;
-  outline: 4px dashed transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  &:hover {
-    outline-color: var(--sapphire);
-  }
-`
-
 const dialog__iconInput = css`
   width: 13rem;
   height: 13rem;
@@ -86,6 +75,14 @@ const dialog__buttonRow = css`
 `
 
 export default function CreatePlaylistDialog(props: IDialogContentProps) {
+  const playlistIconInput = createImageDialogPicker({
+    title: "Please choose an image for this playlist icon",
+  })
+
+  const playlistBannerInput = createImageDialogPicker({
+    title: "Please choose an image for this playlist banner",
+  })
+
   return (
     <div class={`${dialog__root} ${scrollbar} ${scrollbar__vertical}`}>
       <h1 class={dialog__heading}>Create playlist</h1>
@@ -93,15 +90,11 @@ export default function CreatePlaylistDialog(props: IDialogContentProps) {
         <div class={dialog__iconInputContainer}>
           <div>
             <label>Playlist icon</label>
-            <div class={`${dialog__imageInput} ${dialog__iconInput}`}>
-              <BsPlus size={30} />
-            </div>
+            <playlistIconInput.Input$ class$={dialog__iconInput} />
           </div>
           <div class={dialog__bannerWrapper}>
             <label>Playlist banner</label>
-            <div class={`${dialog__imageInput} ${dialog__bannerInput}`}>
-              <BsPlus size={30} />
-            </div>
+            <playlistBannerInput.Input$ class$={dialog__bannerInput} />
           </div>
         </div>
       </CreatePlaylistDialogSection>
