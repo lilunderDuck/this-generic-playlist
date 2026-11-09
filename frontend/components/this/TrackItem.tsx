@@ -151,6 +151,13 @@ const item__currentlyRepeatingThisTrackIndicator = css`
   font-weight: bold;
 `
 
+const item__makeNameDisplayOnTwoRowOnly = css`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`
+
 interface ITrackItemProps extends ITrackData {
   index$: number
   playlistId$: string
@@ -192,7 +199,7 @@ export function TrackItem(props: ITrackItemProps) {
           class={`${item__coverIcon} ${props.coverIconImage ? item__coverIconHasIcon : item__coverIconEmpty}`} 
           style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.playlistId$, props.coverIconImage!)}')`}
         />
-        <p>{props.name}</p>
+        <p class={item__makeNameDisplayOnTwoRowOnly}>{props.name}</p>
       </div>
       <div class={`${header__authorWidth} ${item__seperatorDummy} ${item__authorNames}`}>
         <Author info$={props.author} />
