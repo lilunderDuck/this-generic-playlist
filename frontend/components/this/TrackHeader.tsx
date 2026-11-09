@@ -1,6 +1,14 @@
 import { css } from "molcss"
 
 const header__root = css`
+  position: sticky;
+  top: 0;
+  background-color: var(--mantle);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+`
+
+const header__content = css`
   width: 100%;
   display: flex;
   align-items: center;
@@ -8,9 +16,6 @@ const header__root = css`
   user-select: none;
   padding-inline: 20px;
   padding-block: 7px;
-  background-color: var(--mantle);
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
 `
 
 export const header__indexWidth = css`
@@ -44,13 +49,15 @@ const header__seperator = css`
 export function TrackHeader() {
   return (
     <header class={header__root}>
-      <div class={`${header__indexWidth} ${header__index}`}>#</div>
-      <div class={header__seperator} />
-      <div class={header__nameWidth}>Name</div>
-      <div class={header__seperator} />
-      <div class={header__authorWidth}>Author</div>
-      <div class={header__seperator} />
-      <div class={header__durationWidth}>Duration</div>
+      <div class={header__content}>
+        <div class={`${header__indexWidth} ${header__index}`}>#</div>
+        <div class={header__seperator} />
+        <div class={header__nameWidth}>Name</div>
+        <div class={header__seperator} />
+        <div class={header__authorWidth}>Author</div>
+        <div class={header__seperator} />
+        <div class={header__durationWidth}>Duration</div>
+      </div>
     </header>
   )
 }
