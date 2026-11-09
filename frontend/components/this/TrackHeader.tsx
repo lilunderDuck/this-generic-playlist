@@ -3,6 +3,7 @@ import { css } from "molcss"
 const header__root = css`
   position: sticky;
   top: 0;
+  z-index: 5;
   background-color: var(--mantle);
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
