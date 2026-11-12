@@ -12,10 +12,10 @@ import (
 var appAssets embed.FS
 
 func main() {
-	app := core.NewApp("playlist")
-	app.Init(appAssets, "dist/app", "http://localhost:8000")
+	app := core.NewApp("this_generic_playlist")
+	app.Init(appAssets, "dist/app", "http://localhost:34541")
 
 	playlist.RegisterFunctions()
 
-	app.Start(":8000")
+	app.Start(":34541")
 }

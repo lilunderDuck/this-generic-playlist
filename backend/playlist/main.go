@@ -10,7 +10,7 @@ import (
 )
 
 func RegisterFunctions() {
-	dataFolder := filepath.Join(utils.GetCurrentExecDir(), "data/playlist")
+	dataFolder := filepath.Join(utils.GetCurrentExecDir(), "data/this_generic_playlist")
 	playlistsDb := db.New(dataFolder + "/playlists.db")
 	// tracksDb := db.New(dataFolder + "/tracks.db")
 	front2back.RegisterFnProducer("playlist_getAll", func() ([]PlaylistItemData, error) {
