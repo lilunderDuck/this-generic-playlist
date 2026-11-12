@@ -1,6 +1,6 @@
 import { duckDotLog, duckDotLogWithLabel } from "../utils"
 
-const FN_ROUTE = "http://localhost:8000/teleporter/"
+const FN_ROUTE = "http://localhost:34541/teleporter/"
 
 export function registerPlain<In, Out>(name: string) {
   if (import.meta.env.DEV) {
