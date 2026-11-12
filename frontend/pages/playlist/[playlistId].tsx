@@ -3,6 +3,8 @@ import { A, createAsync, useParams } from "@solidjs/router"
 import { For, Show } from "solid-js"
 import { BsArrowLeft } from "solid-icons/bs"
 // ...
+import "./[playlistId].css"
+// ...
 import { CODEC, playlistBannerUrl, playlistCoverIconUrl, type ITrackData } from "../../api"
 import { LoopingState, usePlaylistContext } from "../../provider"
 import { Author, Button, ButtonSize, Tooltip, TrackHeader, TrackItem, TrackPlayer } from "../../components"
@@ -134,9 +136,9 @@ export default function PlaylistTracksPage() {
       <div class={playlist__goBackBtnWrapper} id="playlist__goBackBtn">
         <Tooltip label$="Go back to home">
           <A href="/">
-            <Button size$={ButtonSize.LARGE}>
+            <Button size$={ButtonSize.LARGE} class="back_button">
               <BsArrowLeft size={20} />
-              Go back
+              <span>Go back</span>
             </Button>
           </A>
         </Tooltip>

@@ -1,0 +1,20 @@
+@keyframes sticky_back_button_text {
+  0% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    display: none;
+  }
+}
+
+.back_button > span {
+  --nav-height-start: 1.5rem;
+  animation: sticky_back_button_text 1s ease-in-out;
+  animation-timeline: scroll();
+  animation-duration: 1s;
+  animation-range: enter var(--nav-height-start) exit calc(2 * var(--nav-height-start));
+  transition: all 0.5s ease-out;
+}
