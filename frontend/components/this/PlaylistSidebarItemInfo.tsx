@@ -7,11 +7,11 @@ import { formatSecondsToMMSS } from "../../utils"
 import { Author } from "./Author"
 import { usePlaylistContext } from "../../provider"
 import { BsArrowCounterclockwise, BsCircleFill, BsImageFill } from "solid-icons/bs"
-import { A } from "@solidjs/router"
 import PlaylistBannerDialogContent from "./PlaylistBannerDialogContent"
 
 const sidebar__root = css`
-  width: 55%;
+  width: 28rem;
+  flex-shrink: 0;
   height: calc(100% - 2 * 10px);
   background-color: var(--mantle);
   border-radius: 6px;
@@ -114,6 +114,13 @@ const sidebar__moreOptionsButtonRow = css`
   gap: 10px;
 `
 
+const sidebar__makeNameDisplayOnTwoRowOnly = css`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`
+
 export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
   const { setSidebarInfo$, resyncPlaylist$ } = usePlaylistContext()
 
@@ -164,7 +171,7 @@ export function PlaylistSidebarItemInfo(props: { info$: IPlaylistItemData }) {
         <div class={sidebar__coverIconWrap}>
           <div class={`${sidebar__coverIcon} ${props.info$.coverIconImage ? sidebar__coverIconHasIcon : sidebar__coverIconEmpty}`} />
           <div>
-            <h1 class={sidebar__playlistName}>{props.info$.name}</h1>
+            <h1 class={`${sidebar__playlistName} ${sidebar__makeNameDisplayOnTwoRowOnly}`}>{props.info$.name}</h1>
             <Author info$={props.info$.author} />
           </div>
         </div>
