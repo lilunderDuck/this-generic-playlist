@@ -1,4 +1,4 @@
-import { BsPauseFill, BsPlayFill } from "solid-icons/bs"
+import { BsMusicNote, BsPauseFill, BsPlayFill } from "solid-icons/bs"
 import { Show } from "solid-js"
 // ...
 import { css } from "molcss"
@@ -71,7 +71,10 @@ const item__coverIconHasIcon = css`
 `
 
 const item__coverIconEmpty = css`
-  background-color: var(--base);
+  background-color: var(--surface0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const item__trackNameWrap = css`
@@ -198,7 +201,11 @@ export function TrackItem(props: ITrackItemProps) {
         <div 
           class={`${item__coverIcon} ${props.coverIconImage ? item__coverIconHasIcon : item__coverIconEmpty}`} 
           style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(props.playlistId$, props.coverIconImage!)}')`}
-        />
+        >
+          <Show when={!props.coverIconImage}>
+            <BsMusicNote />
+          </Show>
+        </div>
         <p class={item__makeNameDisplayOnTwoRowOnly}>{props.name}</p>
       </div>
       <div class={`${header__authorWidth} ${item__seperatorDummy} ${item__authorNames}`}>

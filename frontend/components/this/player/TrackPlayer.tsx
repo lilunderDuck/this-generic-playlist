@@ -1,5 +1,5 @@
 import { css } from "molcss"
-import { BsCaretLeftFill, BsCaretRightFill, BsPauseFill, BsPlayFill } from "solid-icons/bs"
+import { BsCaretLeftFill, BsCaretRightFill, BsMusicNote, BsPauseFill, BsPlayFill } from "solid-icons/bs"
 import { useLocation } from "@solidjs/router"
 import { Show } from "solid-js"
 // ...
@@ -72,7 +72,10 @@ const player__coverIconHasIcon = css`
 `
 
 const player__coverIconEmpty = css`
-  background-color: var(--base);
+  background-color: var(--surface0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const player__currentTrackInfo = css`
@@ -130,8 +133,15 @@ export function TrackPlayer(props: { class?: string }) {
       </div>
       <div class={player__controlsWrap}>
         <div class={player__currentTrackInfo}>
-          <Show when={playlistState$.currentTrack$()?.coverIconImage}>
-            <div class={`${player__coverIcon} ${playlistState$.currentTrack$()?.coverIconImage ? player__coverIconHasIcon : player__coverIconEmpty}`} style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(playlistState$.currentPlaylist$()!.id, playlistState$.currentTrack$()!.coverIconImage!)}')`} />
+          <Show when={playlistState$.currentTrack$()}>
+            <div 
+              class={`${player__coverIcon} ${playlistState$.currentTrack$()?.coverIconImage ? player__coverIconHasIcon : player__coverIconEmpty}`} 
+              style={`--playlist-cover-icon-url:url('${playlistCoverIconUrl(playlistState$.currentPlaylist$()!.id, playlistState$.currentTrack$()!.coverIconImage!)}')`} 
+            >
+              <Show when={!playlistState$.currentTrack$()?.coverIconImage}>
+                <BsMusicNote />
+              </Show>
+            </div>
             <div>
               <h3 class={player__currentlyPlayedTrackName}>
                 {playlistState$.currentTrack$()?.name}
