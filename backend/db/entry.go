@@ -74,16 +74,17 @@ func newEntryFromLine(line string) (*Entry, error) {
 		if debug.IS_ENABLED {
 			debug.ErrLabelf("gdstore", "failed to parse key length:\n%v", err)
 		}
+
 		return nil, ErrBadLine
 	}
 
-	valLen, err := strconv.Atoi(parts[2])
-	if err != nil {
-		if debug.IS_ENABLED {
-			debug.ErrLabelf("gdstore", "failed to parse value length:\n%v", err)
-		}
-		return nil, ErrBadLine
-	}
+	// valLen, err := strconv.Atoi(parts[2])
+	// if err != nil {
+	// 	if debug.IS_ENABLED {
+	// 		debug.ErrLabelf("gdstore", "failed to parse value length:\n%v", err)
+	// 	}
+	// 	return nil, ErrBadLine
+	// }
 
 	rest := parts[3]
 
@@ -101,16 +102,17 @@ func newEntryFromLine(line string) (*Entry, error) {
 		value = []byte(valStr)
 	}
 
-	if len(key) != keyLen {
-		return nil, ErrBadLine
-	}
+	// if len(key) != keyLen {
+	// 	keyLen = len(key)
+	// 	return nil, ErrBadLine
+	// }
 
-	if len(value) != valLen {
-		if debug.IS_ENABLED {
-			debug.ErrLabelf("gdstore", "mismatched length of entry value, expected %d, but got %d", valLen, len(value))
-		}
-		return nil, ErrBadLine
-	}
+	// if len(value) != valLen {
+	// 	if debug.IS_ENABLED {
+	// 		debug.ErrLabelf("gdstore", "mismatched length of entry value, expected %d, but got %d", valLen, len(value))
+	// 	}
+	// 	return nil, ErrBadLine
+	// }
 
 	return &Entry{
 		Action: action,
