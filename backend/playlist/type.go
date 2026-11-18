@@ -42,11 +42,27 @@ type TargetPlaylistParam struct {
 	PlaylistId string `json:"playlistId" validate:"required"`
 }
 
+type BaseTrackData struct {
+	Name           string  `json:"name"`
+	Id             int     `json:"id"`
+	CoverIconImage string  `json:"coverIconImage"`
+	TotalDuration  float64 `json:"totalDuration"`
+	AudioFile      string  `json:"audioFile"`
+}
+
+type SavedTrackData struct {
+	BaseTrackData
+	Author []int `json:"author,omitempty"`
+}
+
 type TrackData struct {
-	Name           string               `json:"name"`
-	Id             int                  `json:"id"`
-	Author         []PlaylistAuthorInfo `json:"author,omitempty"`
-	CoverIconImage string               `json:"coverIconImage"`
-	TotalDuration  float64              `json:"totalDuration"`
-	AudioFile      string               `json:"audioFile"`
+	BaseTrackData
+	Author []PlaylistAuthorInfo `json:"author,omitempty"`
+}
+
+func ToTrackData(this *SavedTrackData, trackAuthors []PlaylistAuthorInfo) TrackData {
+	return TrackData{
+		BaseTrackData: this.BaseTrackData,
+		Author:        trackAuthors,
+	}
 }

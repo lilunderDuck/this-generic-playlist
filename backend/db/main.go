@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 	"toast/backend/debug"
+	"toast/backend/utils"
 
 	"github.com/elliotchance/orderedmap/v2"
 )
@@ -130,6 +131,29 @@ func (store *GDStore) GetString(key string) (valueAsString string, ok bool) {
 	if ok {
 		valueAsString = string(value)
 	}
+	return
+}
+
+func (store *GDStore) GetJSON[T any](key string) (jsonData *T, err error) {
+	if debug.IS_ENABLED {
+		debug.InfoLabelf("gdstore", "get json with key: %s", key)
+	}
+
+	value, ok := store.GetString(key)
+	if !ok {
+		return nil, fmt.Errorf("key %s not found", key)
+	}
+
+	data, err := utils.ParseJsonString[T](value)
+	if err != nil {
+		if debug.IS_ENABLED {
+			debug.InfoLabelf("gdstore", "failed to parse JSON: %#v", err)
+		}
+
+		return nil, err
+	}
+
+	jsonData = &data
 	return
 }
 

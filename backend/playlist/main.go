@@ -3,6 +3,7 @@ package playlist
 import (
 	"errors"
 	"path/filepath"
+	"strconv"
 	"toast/backend/core/front2back"
 	"toast/backend/db"
 	"toast/backend/debug"
@@ -83,16 +84,67 @@ func RegisterFunctions() {
 		}, nil
 	})
 
+	CACHE_DIRECTORY := filepath.Join(utils.GetCurrentDir(), "cache")
+	utils.CreateDirectory(CACHE_DIRECTORY)
+	tracksDb := db.New(dataFolder + "/tracks/tracks.db")
+	authorDb := db.New(dataFolder + "/tracks/authors.db")
 	emptyTrackData := []TrackData{}
 	front2back.RegisterFn("track_getAll", func(data *TargetPlaylistParam) ([]TrackData, error) {
-		tracksData, err := utils.ReadJsonFile[[]TrackData](dataFolder + "/list/" + data.PlaylistId + "/" + "tracks.json")
+		cachedTracksDataPath := CACHE_DIRECTORY + "/" + data.PlaylistId + ".json"
+		tracksData, err := utils.ReadJsonFile[[]TrackData](cachedTracksDataPath)
+		if err == nil {
+			return tracksData, nil
+		}
+
+		if debug.IS_ENABLED {
+			debug.WarnLabelf("tracks", "cached track list not saved for %s, compiling a new one...", data.PlaylistId)
+		}
+
+		tracksRefPath := dataFolder + "/list/" + data.PlaylistId + ".json"
+		tracksRef, err := utils.ReadJsonFile[[]int](tracksRefPath)
 		if err != nil {
 			if debug.IS_ENABLED {
+				debug.WarnLabelf("playlist", "could not be able to read %s, returned empty tracks data instead", debug.FormatPath(tracksRefPath))
 				debug.WarnLabelf("playlist", "%v", err)
+			}
+
+			return emptyTrackData, nil
+		}
+
+		wholeTracks := make([]TrackData, len(tracksRef))
+		for trackIndex, trackId := range tracksRef {
+			if debug.IS_ENABLED {
+				debug.InfoLabelf("tracks", "compiling track %d", trackId)
+			}
+
+			trackData, err := tracksDb.GetJSON[SavedTrackData](strconv.Itoa(trackId))
+			if err != nil {
+				return emptyTrackData, err
+			}
+
+			trackAuthors := []PlaylistAuthorInfo{}
+			for i := 0; i < len(trackData.Author); i++ {
+				authorData, err := authorDb.GetJSON[PlaylistAuthorInfo](strconv.Itoa(trackData.Author[i]))
+				if err != nil {
+					if debug.IS_ENABLED {
+						debug.WarnLabelf("playlist", "%#v", err)
+					}
+					continue
+				}
+
+				trackAuthors = append(trackAuthors, *authorData)
+			}
+
+			wholeTracks[trackIndex] = ToTrackData(trackData, trackAuthors)
+		}
+
+		if err := utils.WriteJsonFile(cachedTracksDataPath, wholeTracks); err != nil {
+			if debug.IS_ENABLED {
+				debug.ErrLabelf("playlist", "error during saving cached tracks data: %#v", err)
 			}
 			return emptyTrackData, nil
 		}
 
-		return tracksData, nil
+		return wholeTracks, nil
 	})
 }
