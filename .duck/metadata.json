@@ -4,6 +4,6 @@
   "description": "A totally normal playlist player for my own customization with no twist whatsoever.",
   "type": "public",
   "status": "active",
-  "icon": "toast.jpg",
+  "icon": "[USE_PARENT_ICON]",
   "repoUrl": "https://github.com/lilunderDuck/this-generic-playlist"
 }
